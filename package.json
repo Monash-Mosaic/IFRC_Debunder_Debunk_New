@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -27,6 +27,7 @@
     "eslint": "^9.36.0",
     "eslint-config-next": "^15.5.4",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.6.2"
   }
 }

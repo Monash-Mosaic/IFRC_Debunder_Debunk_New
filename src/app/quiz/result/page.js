@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import BackGuard from '../../components/BackGuard.jsx'
 
 function getResultConfig(status) {
@@ -17,7 +18,7 @@ function getResultConfig(status) {
   }
 }
 
-export default function ResultPage() {
+function ResultContent() {
   const router = useRouter()
   const sp = useSearchParams() // kept for backward-compat, ignored for state
   const raw = sp.get('status') || ''
@@ -73,5 +74,14 @@ export default function ResultPage() {
     </main>
   )
 }
+
+export default function ResultPage() {
+  return (
+    <Suspense fallback={<div className="quiz-screen">Loading...</div>}>
+      <ResultContent />
+    </Suspense>
+  )
+}
+
 
 
