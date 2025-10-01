@@ -1,4 +1,6 @@
 import './globals.css';
+
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Press_Start_2P } from 'next/font/google';
 
 export const metadata = {
@@ -13,6 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className={pressStart.className}>
         {children}
+        <SpeedInsights/>
       </body>
     </html>
   );
