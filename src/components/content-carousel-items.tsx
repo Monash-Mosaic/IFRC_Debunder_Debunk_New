@@ -32,6 +32,8 @@ export default function ContentCarouselItems({
                 postId={mcq.id}
                 user={mcq.post.user}
                 content={mcq.post.content}
+                mediaUrl={mcq.post.mediaUrl}
+                mediaType={mcq.post.mediaType}
                 options={mcq.options}
                 correctOptionId={mcq.correctOptionId}
                 answer={answer}

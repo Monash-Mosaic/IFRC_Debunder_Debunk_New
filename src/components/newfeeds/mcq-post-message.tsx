@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { ThumbsUp, ThumbsDown, MessageCircle, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MCQOption, User } from '@/contents/en';
@@ -8,6 +9,8 @@ export interface MCQPostMessageProps {
   postId: string;
   user: User;
   content: React.ReactNode;
+  mediaUrl?: string;
+  mediaType?: 'image' | 'video';
   options: MCQOption[];
   correctOptionId: string;
   answer: string | null | undefined;
@@ -19,6 +22,8 @@ export default function MCQPostMessage({
   postId,
   user,
   content,
+  mediaUrl,
+  mediaType,
   options,
   correctOptionId,
   answer,
@@ -69,6 +74,21 @@ export default function MCQPostMessage({
       <div className="mb-4 text-sm text-[#0D1B3E]">
         {content}
       </div>
+
+      {/* Media attachment */}
+      {mediaUrl && mediaType === 'image' && (
+        <div className="relative mb-4 w-full overflow-hidden rounded-lg bg-[#E8E9ED]">
+          <div className="aspect-video w-full">
+            <Image
+              src={mediaUrl}
+              alt="Question post"
+              width={500}
+              height={500}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Answer options */}
       <div className="space-y-2 mb-4">
