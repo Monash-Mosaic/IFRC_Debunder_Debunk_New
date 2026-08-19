@@ -406,7 +406,7 @@ describe('HomeContent', () => {
     expect(mockSetAnswer).not.toHaveBeenCalled();
   });
 
-  it('moves to next question after modal close if current question is answered', async () => {
+  it('does not move to next question when modal is closed', async () => {
     // Track when answer is set to update mock
     let answerSet = false;
     mockSetAnswer.mockImplementation(() => {
@@ -440,7 +440,7 @@ describe('HomeContent', () => {
 
     // Verify that isAnswered was called and moveToNextQuestion was called
     expect(mockIsAnswered).toHaveBeenCalled();
-    expect(mockMoveToNextQuestion).toHaveBeenCalled();
+    expect(mockMoveToNextQuestion).not.toHaveBeenCalled();
   });
 
   it('does not move to next question if current question is not answered', async () => {
@@ -589,7 +589,7 @@ describe('HomeContent', () => {
       expect(screen.getByTestId('modal-content-mcq-1')).toHaveTextContent('MCQ Incorrect Content');
     });
 
-    it('moves to next question when MCQ modal is closed and post is answered', async () => {
+    it('does not move to next question when MCQ modal is closed', async () => {
       let answerSet = false;
       mockSetAnswer.mockImplementation(() => { answerSet = true; });
       mockIsAnswered.mockImplementation((postId: string) => postId === 'mcq-1' && answerSet);
@@ -601,7 +601,7 @@ describe('HomeContent', () => {
       await user.click(screen.getByTestId('mcq-option-mcq-1'));
       await user.click(await screen.findByTestId('close-modal-mcq-1'));
 
-      expect(mockMoveToNextQuestion).toHaveBeenCalled();
+      expect(mockMoveToNextQuestion).not.toHaveBeenCalled();
     });
 
     it('calls moveToNextQuestion when continue is clicked on an answered MCQ question', async () => {
