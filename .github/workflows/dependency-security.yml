@@ -1,0 +1,80 @@
+name: Dependency Security
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply_fixes:
+        description: Push npm audit fixes to the current branch if high-severity vulnerabilities are found
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      apply_fixes:
+        description: Push npm audit fixes to the current branch if high-severity vulnerabilities are found
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-security:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          token: ${{ secrets.DEPENDENCY_FIX_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Dependency audit
+        id: audit
+        continue-on-error: true
+        run: npm audit --audit-level=high
+
+      - name: Fix dependency vulnerabilities
+        id: fix
+        if: ${{ inputs.apply_fixes == true && steps.audit.outcome == 'failure' }}
+        run: |
+          npm audit fix --package-lock-only
+          npm ci
+
+      - name: Push security fixes to the current branch
+        if: ${{ inputs.apply_fixes == true && steps.audit.outcome == 'failure' && steps.fix.outcome == 'success' }}
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "No lockfile changes; remaining issues need a manual upgrade."
+            exit 0
+          fi
+
+          if git log -1 --format='%s' | grep -qx 'chore(deps): apply npm security fixes'; then
+            echo "HEAD is already an automated security fix; skipping another commit."
+            exit 0
+          fi
+
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore(deps): apply npm security fixes"
+          git push origin "HEAD:$BRANCH"
+
+      - name: Fail on high-severity vulnerabilities
+        if: ${{ steps.audit.outcome == 'failure' }}
+        run: |
+          echo "High-severity vulnerabilities are present on this revision."
+          echo "If a lockfile fix was pushed, wait for the new CI run on that commit."
+          exit 1
