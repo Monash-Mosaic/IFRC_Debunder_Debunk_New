@@ -203,6 +203,8 @@ export default function OnboardingFlow() {
               postId={practiceItem.id}
               user={(practiceItem as MCQContent).post.user}
               content={(practiceItem as MCQContent).post.content}
+              mediaUrl={(practiceItem as MCQContent).post.mediaUrl}
+              mediaType={(practiceItem as MCQContent).post.mediaType}
               options={(practiceItem as MCQContent).options}
               correctOptionId={(practiceItem as MCQContent).correctOptionId}
               answer={practiceAnswer}

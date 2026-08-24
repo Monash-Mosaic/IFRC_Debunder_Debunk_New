@@ -93,11 +93,8 @@ export default function HomeContent() {
   const nextEnabled = hasEngagedCurrent && canGoNext;
   const prevEnabled = canGoPrev;
 
-  const handleOnCloseModal = (postId: string) => {
-    setModalPostId(null);
-    if (isAnswered(postId)) {
-      moveToNextQuestion();
-    }
+  const handleOnCloseModal = () => {
+  setModalPostId(null);
   };
 
   const handleOnContinueModal = (postId: string) => {
@@ -258,6 +255,8 @@ export default function HomeContent() {
                             postId={contentItem.id}
                             user={(contentItem as MCQContent).post.user}
                             content={(contentItem as MCQContent).post.content}
+                            mediaUrl={(contentItem as MCQContent).post.mediaUrl}
+                            mediaType={(contentItem as MCQContent).post.mediaType}
                             options={(contentItem as MCQContent).options}
                             correctOptionId={(contentItem as MCQContent).correctOptionId}
                             answer={answer}
@@ -346,7 +345,7 @@ export default function HomeContent() {
         return (
           <PrebunkingModal
             isOpen={true}
-            onClose={() => handleOnCloseModal(modalPostId)}
+            onClose={handleOnCloseModal}
             onContinue={() => handleOnContinueModal(modalPostId)}
             postId={modalPostId}
             content={reasonContent}

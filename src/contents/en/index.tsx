@@ -315,6 +315,8 @@ export const content: Record<ContentId, Content> = {
       id: 'mcq-2',
       user: users['echo'],
       content: <Mcq2Question />,
+      mediaUrl: '/images/posts/ifrc/question-02.webp',
+      mediaType: 'image',
     },
     options: [
       { id: 'a', label: "Because climate change is fake" },
@@ -338,7 +340,9 @@ export const content: Record<ContentId, Content> = {
     post: {
       id: 'like-dislike-6',
       user: users['echo'],
-      content: <Content6Post />
+      content: <Content6Post />,
+      mediaUrl: '/images/posts/ifrc/question-03.webp',
+      mediaType: 'image',
     },
     correctAnswer: 'dislike',
     whyCorrectAnswer: {
@@ -356,7 +360,9 @@ export const content: Record<ContentId, Content> = {
     post: {
       id: 'like-dislike-7',
       user: users['echo'],
-      content: <Content7Post />
+      content: <Content7Post />,
+      mediaUrl: '/images/posts/ifrc/question-05.webp',
+      mediaType: 'image',
     },
     correctAnswer: 'dislike',
     whyCorrectAnswer: {
@@ -375,6 +381,8 @@ export const content: Record<ContentId, Content> = {
       id: 'mcq-3',
       user: users['echo'],
       content: <Mcq3Question />,
+      mediaUrl: '/images/posts/ifrc/question-07.webp',
+      mediaType: 'image',
     },
     options: [
       { id: 'a', label: "Share it because NASA is a trusted source" },
@@ -398,7 +406,9 @@ export const content: Record<ContentId, Content> = {
     post: {
       id: 'like-dislike-8',
       user: users['echo'],
-      content: <Content8Post />
+      content: <Content8Post />,
+      mediaUrl: '/images/posts/ifrc/question-08.webp',
+      mediaType: 'image',
     },
     correctAnswer: 'like',
     whyCorrectAnswer: {
