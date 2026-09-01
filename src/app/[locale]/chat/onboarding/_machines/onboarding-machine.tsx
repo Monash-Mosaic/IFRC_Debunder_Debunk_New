@@ -174,9 +174,9 @@ export const useOnboardingMachine = (
     states: {
       initial: {
         on: {
-          'option1-step1': 'completed',
+          'option1-step1': 'step3',
           'option2-step1': 'step2',
-          'option3-step1': 'practice',
+          'option3-step1': 'step3',
         },
         effect({ setContext, event }: EffectArgs) {
           if (!event) return;
@@ -194,9 +194,9 @@ export const useOnboardingMachine = (
       },
       step2: {
         on: {
-          'option1-step2': 'practice',
+          'option1-step2': 'step3',
           'option2-step2': 'step3',
-          'option3-step2': 'practice',
+          'option3-step2': 'step3',
         },
         effect({ setContext, event }: EffectArgs) {
           if (!event || event.type === '$$initial') return;

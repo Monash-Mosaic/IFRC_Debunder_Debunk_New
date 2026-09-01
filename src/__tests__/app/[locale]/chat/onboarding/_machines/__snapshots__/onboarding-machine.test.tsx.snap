@@ -675,28 +675,3 @@ exports[`onboardingMachine matches snapshot going through practice and completin
   "value": "practice",
 }
 `;
-
-exports[`onboardingMachine matches snapshot when selecting option1 in step1 (completes immediately) 1`] = `
-{
-  "context": {
-    "messages": [
-      {
-        "id": Any<String>,
-        "sender": "paula",
-        "timestamp": Any<Number>,
-        "type": "typing",
-        "typing": true,
-      },
-    ],
-    "selectedOptions": [],
-    "typing": true,
-  },
-  "event": {
-    "optionText": "Let's go",
-    "type": "option1-step1",
-  },
-  "nextEvents": [],
-  "nextEventsT": [],
-  "value": "completed",
-}
-`;

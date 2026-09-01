@@ -45,18 +45,17 @@ describe('onboardingMachine', () => {
     expect(normalized).toMatchSnapshot();
   });
 
-  it('matches snapshot when selecting option1 in step1 (completes immediately)', () => {
+  it('routes option1-step1 into step3 instead of completing immediately', () => {
     const { result } = renderHook(() => useOnboardingMachine());
 
     act(() =>
       result.current[1]({
         type: 'option1-step1',
-        optionText: "Let's go",
+        optionText: "Let's do this",
       } as OnboardingOptionEvent)
     );
 
-    const normalized = normalizeForSnapshot(result.current[0]);
-    expect(normalized).toMatchSnapshot();
+    expect(result.current[0].value).toBe('step3');
   });
 
   it('matches snapshot following step1 -> step2 -> step3 path', () => {
@@ -139,7 +138,7 @@ describe('onboardingMachine', () => {
     expect(normalized3).toMatchSnapshot('after practice answered (completed state)');
   });
 
-  it('routes option3-step1 directly into practice', () => {
+  it('routes option3-step1 into step3 instead of practice', () => {
     const { result } = renderHook(() => useOnboardingMachine());
 
     act(() =>
@@ -149,10 +148,10 @@ describe('onboardingMachine', () => {
       } as OnboardingOptionEvent)
     );
 
-    expect(result.current[0].value).toBe('practice');
+    expect(result.current[0].value).toBe('step3');
   });
 
-  it('routes the confident shortcuts (option1-step2, option1-step3) into practice instead of skipping straight to completed', () => {
+  it('routes step2 replies into step3 instead of skipping the secret', () => {
     const { result } = renderHook(() => useOnboardingMachine());
 
     act(() =>
@@ -171,7 +170,7 @@ describe('onboardingMachine', () => {
       } as OnboardingOptionEvent)
     );
 
-    expect(result.current[0].value).toBe('practice');
+    expect(result.current[0].value).toBe('step3');
   });
 
   it('matches snapshot accumulating user messages when selecting options', () => {
