@@ -176,7 +176,7 @@ describe('OnboardingFlow practice question', () => {
   it('renders the practice explanation message and the real first question', () => {
     advanceToPractice();
 
-    expect(screen.getByText('practice.explanation')).toBeInTheDocument();
+    expect(screen.getByText('practice.mcq')).toBeInTheDocument();
     expect(screen.getByTestId('practice-mcq-post-practice-mcq')).toBeInTheDocument();
   });
 

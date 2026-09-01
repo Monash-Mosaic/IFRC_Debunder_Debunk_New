@@ -57,7 +57,10 @@
         "option2": "Retour à l'accueil"
       },
       "practice": {
-        "explanation": "Il y a deux types de publications que tu verras : les publications j'aime/je n'aime pas — aime si ça semble vrai, n'aime pas si ça semble faux — et les publications à choix multiples où tu choisis la meilleure réponse. Essayons-en une maintenant !"
+        "explanation": "Il y a deux types de publications que tu verras : les publications j'aime/je n'aime pas — aime si ça semble vrai, n'aime pas si ça semble faux — et les publications à choix multiples où tu choisis la meilleure réponse. Essayons-en une maintenant !",
+        "mcq": "Cette publication te demande de choisir une option. Choisis la bonne.",
+        "likeDislike": "Celle-ci te demande d'aimer ou de ne pas aimer. Aime si ça a l'air vrai, n'aime pas si ça a l'air faux.",
+        "share": "Cette publication te demande de partager ou de défiler. Si ça a l'air louche, défile."
       },
       "completed": {
         "message": "Le jeu commence ! Tu es prêt à naviguer dans le fil et identifier la désinformation. Bonne chance ! 🎮"

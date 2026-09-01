@@ -56,6 +56,12 @@ export default function OnboardingFlow() {
 
   const { content, contentList } = CONTENTS[locale as keyof typeof CONTENTS];
   const practiceItem = contentList[0];
+  const practiceCoachingKey =
+    practiceItem.type === ContentType.MCQ
+      ? 'practice.mcq'
+      : practiceItem.type === ContentType.SHARE
+        ? 'practice.share'
+        : 'practice.likeDislike';
 
   // Same createGameStore/useCredibilityStore machinery home-content.tsx uses, persisted to
   // the same localStorage key — the real feed picks up this answer automatically.
@@ -170,7 +176,11 @@ export default function OnboardingFlow() {
                   key={message.id}
                   senderName={sender.name}
                   senderAvatar={sender.avatar}
-                  displayText={t(message.text)}
+                  displayText={t(
+                    message.text === 'practice.explanation'
+                      ? practiceCoachingKey
+                      : message.text
+                  )}
                 />
               );
             case 'post':

@@ -173,7 +173,7 @@ describe('OnboardingFlow practice question (like/dislike)', () => {
   it('renders the practice explanation message and the real first question via LikeDislikePostMessage', () => {
     advanceToPractice();
 
-    expect(screen.getByText('practice.explanation')).toBeInTheDocument();
+    expect(screen.getByText('practice.likeDislike')).toBeInTheDocument();
     expect(screen.getByTestId('practice-like-dislike-post-practice-like-dislike')).toBeInTheDocument();
   });
 

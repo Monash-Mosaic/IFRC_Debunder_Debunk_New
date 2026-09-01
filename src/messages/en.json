@@ -57,7 +57,10 @@
         "option2": "Return home"
       },
       "practice": {
-        "explanation": "There are two kinds of posts you'll see: like/dislike posts — like it if it looks true, dislike if it looks false — and multiple-choice posts where you pick the best response. Let's try one now!"
+        "explanation": "There are two kinds of posts you'll see: like/dislike posts — like it if it looks true, dislike if it looks false — and multiple-choice posts where you pick the best response. Let's try one now!",
+        "mcq": "This post is asking you to pick an option. Choose the correct one.",
+        "likeDislike": "This one is asking you to like or dislike. Like it if it looks true, dislike if it looks false.",
+        "share": "This post is asking you to share or scroll. If the post looks dodgy, you should scroll."
       },
       "completed": {
         "message": "Game begins! You're all set to navigate the feed and identify misinformation. Good luck! 🎮"
