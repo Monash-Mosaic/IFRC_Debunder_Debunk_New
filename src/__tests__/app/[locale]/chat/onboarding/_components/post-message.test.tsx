@@ -1,5 +1,6 @@
 import { render, screen } from '@/test-utils/test-utils';
 import userEvent from '@testing-library/user-event';
+import { useTranslations } from 'next-intl';
 import PostMessage from '@/app/[locale]/chat/onboarding/_components/post-message';
 
 // Mock EchoAvatar
@@ -38,6 +39,13 @@ describe('PostMessage', () => {
     user: defaultUser,
     content: defaultContent,
   };
+
+  beforeEach(() => {
+    jest.mocked(useTranslations).mockReturnValue(((key: string) => ({
+      like: 'Like',
+      report: 'Report',
+    })[key] ?? key) as ReturnType<typeof useTranslations>);
+  });
 
   it('renders the post with default props', () => {
     render(<PostMessage {...defaultProps} />);
@@ -141,6 +149,41 @@ describe('PostMessage', () => {
     expect(screen.getByLabelText('Dislike')).toBeInTheDocument();
     expect(screen.getByLabelText('Comment')).toBeInTheDocument();
     expect(screen.getByLabelText('Share')).toBeInTheDocument();
+  });
+
+  it('renders prominent Like and Report actions in like-report mode', () => {
+    const { container } = render(
+      <PostMessage {...defaultProps} interactionMode="like-report" />
+    );
+
+    const likeButton = screen.getByRole('button', { name: 'Like' });
+    const reportButton = screen.getByRole('button', { name: 'Report' });
+
+    expect(likeButton).toHaveTextContent('Like');
+    expect(reportButton).toHaveTextContent('Report');
+    expect(likeButton).toHaveClass('min-h-12', 'w-full');
+    expect(reportButton).toHaveClass('min-h-12', 'w-full');
+    expect(container.querySelector('.lucide-thumbs-up')).toBeInTheDocument();
+    expect(container.querySelector('.lucide-circle-alert')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Dislike')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Comment')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Share')).not.toBeInTheDocument();
+  });
+
+  it('maps the Report action to the existing onDislike callback', async () => {
+    const onDislike = jest.fn();
+    const user = userEvent.setup();
+    render(
+      <PostMessage
+        {...defaultProps}
+        interactionMode="like-report"
+        onDislike={onDislike}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Report' }));
+
+    expect(onDislike).toHaveBeenCalledTimes(1);
   });
 
   it('renders Echo avatar', () => {

@@ -3,7 +3,7 @@
 import PostMessage, { PostMessageProps } from '@/app/[locale]/chat/onboarding/_components/post-message';
 import { User } from '@/contents/en';
 
-export interface LikeDislikePostMessageProps extends Omit<PostMessageProps, 'likeDisabled' | 'dislikeDisabled' | 'commentDisabled' | 'shareDisabled' | 'onLike' | 'onDislike'> {
+export interface LikeDislikePostMessageProps extends Omit<PostMessageProps, 'likeDisabled' | 'dislikeDisabled' | 'commentDisabled' | 'shareDisabled' | 'onLike' | 'onDislike' | 'interactionMode'> {
   postId: string;
   answer: 'like' | 'dislike' | null | undefined;
   correctAnswer: 'like' | 'dislike';
@@ -66,11 +66,10 @@ export default function LikeDislikePostMessage({
       dislikeClassName={dislikeClassName}
       likeDisabled={hasAnswered || isDisabled}
       dislikeDisabled={hasAnswered || isDisabled}
-      commentDisabled={true}
-      shareDisabled={true}
       mediaUrl={mediaUrl}
       mediaType={mediaType}
       {...postMessageProps}
+      interactionMode="like-report"
     />
   );
 }

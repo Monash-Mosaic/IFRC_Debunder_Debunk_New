@@ -60,6 +60,14 @@ const mcqItem: Content = {
   whyIncorrectAnswer: { title: <div>T</div>, content: <div>C</div> },
 };
 
+const shareItem: Content = {
+  id: 'share-1',
+  type: ContentType.SHARE,
+  correctAnswer: 'share',
+  whyCorrectAnswer: { title: <div>T</div>, content: <div>C</div> },
+  whyIncorrectAnswer: { title: <div>T</div>, content: <div>C</div> },
+};
+
 const defaultProps = {
   getAnswer: jest.fn((_id: string): string | null => null),
   isPostDisabled: jest.fn(() => false),
@@ -83,6 +91,19 @@ describe('ContentCarouselItems', () => {
     render(<ContentCarouselItems {...defaultProps} contentList={[likeDislikeItem, mcqItem]} />);
     expect(screen.getByTestId('ld-post-ld-1')).toBeInTheDocument();
     expect(screen.getByTestId('mcq-post-mcq-1')).toBeInTheDocument();
+  });
+
+  it('does not route unsupported content to Like/Report or hide valid siblings', () => {
+    render(
+      <ContentCarouselItems
+        {...defaultProps}
+        contentList={[shareItem, mcqItem, likeDislikeItem]}
+      />
+    );
+
+    expect(screen.queryByTestId('ld-post-share-1')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mcq-post-mcq-1')).toBeInTheDocument();
+    expect(screen.getByTestId('ld-post-ld-1')).toBeInTheDocument();
   });
 
   it('passes answer from getAnswer to like-dislike post', () => {

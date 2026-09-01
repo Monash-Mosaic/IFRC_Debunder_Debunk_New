@@ -194,6 +194,19 @@ jest.mock('@/contents', () => ({
             content: <div>Incorrect Content 2</div>,
           },
         },
+        {
+          id: 'share-1',
+          type: 'share',
+          correctAnswer: 'share' as const,
+          whyCorrectAnswer: {
+            title: <div>Share Correct Title</div>,
+            content: <div>Share Correct Content</div>,
+          },
+          whyIncorrectAnswer: {
+            title: <div>Share Incorrect Title</div>,
+            content: <div>Share Incorrect Content</div>,
+          },
+        },
       ],
     },
   },
@@ -350,6 +363,15 @@ describe('HomeContent', () => {
 
   it('renders posts when onboarding is completed', () => {
     render(<HomeContent />);
+    expect(screen.getByTestId('post-1')).toBeInTheDocument();
+    expect(screen.getByTestId('post-2')).toBeInTheDocument();
+  });
+
+  it('does not route dormant Share content to Like/Report', () => {
+    render(<HomeContent />);
+
+    expect(screen.queryByTestId('post-share-1')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mcq-post-mcq-1')).toBeInTheDocument();
     expect(screen.getByTestId('post-1')).toBeInTheDocument();
     expect(screen.getByTestId('post-2')).toBeInTheDocument();
   });

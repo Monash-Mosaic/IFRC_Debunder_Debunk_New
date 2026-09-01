@@ -18,6 +18,10 @@
     "loading": "Loading...",
     "error": "An error occurred"
   },
+  "postActions": {
+    "like": "Like",
+    "report": "Report"
+  },
   "underDevelopment": {
     "title": "Under Development",
     "message": "This page is currently under development. Please check back soon!"

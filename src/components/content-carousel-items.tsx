@@ -44,23 +44,27 @@ export default function ContentCarouselItems({
           );
         }
 
-        const likeDislike = contentItem as LikeDislikeContent;
-        return (
-          <CarouselItem key={index} className="pt-2">
-            <LikeDislikePostMessage
-              postId={likeDislike.id}
-              user={likeDislike.post.user}
-              content={likeDislike.post.content}
-              mediaUrl={likeDislike.post.mediaUrl}
-              mediaType={likeDislike.post.mediaType}
-              answer={answer as 'like' | 'dislike' | null}
-              correctAnswer={likeDislike.correctAnswer}
-              onLike={(postId) => onAnswer(postId, 'like')}
-              onDislike={(postId) => onAnswer(postId, 'dislike')}
-              isDisabled={isDisabled}
-            />
-          </CarouselItem>
-        );
+        if (contentItem.type === ContentType.LIKE_DISLIKE) {
+          const likeDislike = contentItem as LikeDislikeContent;
+          return (
+            <CarouselItem key={index} className="pt-2">
+              <LikeDislikePostMessage
+                postId={likeDislike.id}
+                user={likeDislike.post.user}
+                content={likeDislike.post.content}
+                mediaUrl={likeDislike.post.mediaUrl}
+                mediaType={likeDislike.post.mediaType}
+                answer={answer as 'like' | 'dislike' | null}
+                correctAnswer={likeDislike.correctAnswer}
+                onLike={(postId) => onAnswer(postId, 'like')}
+                onDislike={(postId) => onAnswer(postId, 'dislike')}
+                isDisabled={isDisabled}
+              />
+            </CarouselItem>
+          );
+        }
+
+        return null;
       })}
     </CarouselContent>
   );

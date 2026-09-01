@@ -263,7 +263,7 @@ export default function HomeContent() {
                             isDisabled={isDisabled}
                             onAnswer={handleOnAnswer}
                           />
-                        ) : (
+                        ) : contentItem.type === ContentType.LIKE_DISLIKE ? (
                           <LikeDislikePostMessage
                             postId={contentItem.id}
                             user={(contentItem as LikeDislikeContent).post.user}
@@ -276,7 +276,7 @@ export default function HomeContent() {
                             onDislike={(postId) => handleOnAnswer(postId, 'dislike')}
                             isDisabled={isDisabled}
                           />
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   );

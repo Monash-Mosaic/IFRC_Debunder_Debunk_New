@@ -18,6 +18,10 @@
     "loading": "Cargando...",
     "error": "Ocurrió un error"
   },
+  "postActions": {
+    "like": "Me gusta",
+    "report": "Denunciar"
+  },
   "underDevelopment": {
     "title": "En Desarrollo",
     "message": "Esta página está actualmente en desarrollo. ¡Vuelve pronto!"

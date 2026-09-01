@@ -18,6 +18,10 @@
     "loading": "加载中...",
     "error": "发生错误"
   },
+  "postActions": {
+    "like": "点赞",
+    "report": "举报"
+  },
   "underDevelopment": {
     "title": "开发中",
     "message": "此页面正在开发中。请稍后再来查看！"

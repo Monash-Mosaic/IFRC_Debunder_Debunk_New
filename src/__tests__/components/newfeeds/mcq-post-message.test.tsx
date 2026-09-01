@@ -4,13 +4,6 @@ import { render, screen } from '@/test-utils/test-utils';
 import userEvent from '@testing-library/user-event';
 import MCQPostMessage from '@/components/newfeeds/mcq-post-message';
 
-jest.mock('lucide-react', () => ({
-  ThumbsUp: () => <svg />,
-  ThumbsDown: () => <svg />,
-  MessageCircle: () => <svg />,
-  Send: () => <svg />,
-}));
-
 const defaultProps = {
   postId: 'mcq-1',
   user: {
@@ -55,12 +48,13 @@ describe('MCQPostMessage', () => {
       expect(screen.getByRole('button', { name: 'Option C' })).toBeInTheDocument();
     });
 
-    it('always disables like, dislike, comment, and share buttons', () => {
+    it('does not render unrelated social actions', () => {
       render(<MCQPostMessage {...defaultProps} />);
-      expect(screen.getByRole('button', { name: 'Like' })).toBeDisabled();
-      expect(screen.getByRole('button', { name: 'Dislike' })).toBeDisabled();
-      expect(screen.getByRole('button', { name: 'Comment' })).toBeDisabled();
-      expect(screen.getByRole('button', { name: 'Share' })).toBeDisabled();
+      expect(screen.queryByRole('button', { name: 'Like' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Dislike' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Report' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Comment' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Share' })).not.toBeInTheDocument();
     });
   });
 
