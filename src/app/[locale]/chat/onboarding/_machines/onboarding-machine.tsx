@@ -246,10 +246,16 @@ export const useOnboardingMachine = (
             };
           });
           const timeout = setTimeout(() => {
+            const tipKey =
+              event.type === 'option2-step2'
+                ? 'step3.tipsAgree'
+                : event.type === 'option3-step1'
+                  ? 'step3.tipsShowMe'
+                  : 'step3.tips';
             setContext((context: OnboardingContext) => {
               return {
                 ...context,
-                messages: [...context.messages.slice(0, -1), createMessage('paula', 'step3.tips')],
+                messages: [...context.messages.slice(0, -1), createMessage('paula', tipKey)],
                 typing: false,
               };
             });
@@ -258,7 +264,7 @@ export const useOnboardingMachine = (
         },
         on: {
           'option1-step3': 'practice',
-          'option2-step3': 'practice',
+          'option2-step3': 'completed',
         },
       },
       practice: {

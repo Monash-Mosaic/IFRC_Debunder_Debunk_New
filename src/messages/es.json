@@ -50,9 +50,11 @@
         "option3": "Espera, ¿cómo sé qué es real?"
       },
       "step3": {
-        "tips": "¡Exacto! Aquí está el secreto: Busca lenguaje exagerado, fuentes faltantes y cosas que parecen DEMASIADO locas para ser ciertas. Prueba la primera publicación - ¡te diré cómo lo hiciste!",
-        "option1": "¡De acuerdo, entrando al feed ahora!",
-        "option2": "¿Muéstrame un ejemplo primero?"
+        "tips": "Aquí está el secreto: Busca lenguaje exagerado, fuentes faltantes y cosas que parecen DEMASIADO locas para ser ciertas. Prueba la primera publicación - ¡te diré cómo lo hiciste!",
+        "tipsAgree": "¡Exacto! Aquí está el secreto: Busca lenguaje exagerado, fuentes faltantes y cosas que parecen DEMASIADO locas para ser ciertas. Prueba la primera publicación - ¡te diré cómo lo hiciste!",
+        "tipsShowMe": "Así es como funciona. Busca lenguaje exagerado, fuentes faltantes y cosas que parecen DEMASIADO locas para ser ciertas. Prueba la primera publicación - ¡te diré cómo lo hiciste!",
+        "option1": "¡Vamos! ¡Basta de hablar!",
+        "option2": "Volver al inicio"
       },
       "practice": {
         "explanation": "Hay dos tipos de publicaciones que verás: publicaciones de me gusta/no me gusta — dale me gusta si parece verdadera, no me gusta si parece falsa — y publicaciones de opción múltiple donde eliges la mejor respuesta. ¡Probemos una ahora!"

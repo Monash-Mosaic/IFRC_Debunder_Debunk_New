@@ -390,7 +390,7 @@ exports[`onboardingMachine matches snapshot following step1 -> step2 -> step3 pa
       {
         "id": Any<String>,
         "sender": "paula",
-        "text": "step3.tips",
+        "text": "step3.tipsAgree",
         "timestamp": Any<Number>,
         "type": "text",
       },
@@ -465,14 +465,14 @@ exports[`onboardingMachine matches snapshot going through practice and completin
       {
         "id": Any<String>,
         "sender": "paula",
-        "text": "step3.tips",
+        "text": "step3.tipsAgree",
         "timestamp": Any<Number>,
         "type": "text",
       },
       {
         "id": Any<String>,
         "sender": "user",
-        "text": "Option 2",
+        "text": "Let's go",
         "timestamp": Any<Number>,
         "type": "text",
       },
@@ -487,7 +487,7 @@ exports[`onboardingMachine matches snapshot going through practice and completin
     "selectedOptions": [
       "option2-step1",
       "option2-step2",
-      "option2-step3",
+      "option1-step3",
     ],
     "typing": false,
   },
@@ -548,14 +548,14 @@ exports[`onboardingMachine matches snapshot going through practice and completin
       {
         "id": Any<String>,
         "sender": "paula",
-        "text": "step3.tips",
+        "text": "step3.tipsAgree",
         "timestamp": Any<Number>,
         "type": "text",
       },
       {
         "id": Any<String>,
         "sender": "user",
-        "text": "Option 2",
+        "text": "Let's go",
         "timestamp": Any<Number>,
         "type": "text",
       },
@@ -570,13 +570,13 @@ exports[`onboardingMachine matches snapshot going through practice and completin
     "selectedOptions": [
       "option2-step1",
       "option2-step2",
-      "option2-step3",
+      "option1-step3",
     ],
     "typing": false,
   },
   "event": {
-    "optionText": "Option 2",
-    "type": "option2-step3",
+    "optionText": "Let's go",
+    "type": "option1-step3",
   },
   "nextEvents": [
     "PRACTICE_ANSWERED",
@@ -588,7 +588,7 @@ exports[`onboardingMachine matches snapshot going through practice and completin
 }
 `;
 
-exports[`onboardingMachine matches snapshot going through practice and completing when the question is answered: after selecting option2-step3 (practice state) 1`] = `
+exports[`onboardingMachine matches snapshot going through practice and completing when the question is answered: after selecting option1-step3 (practice state) 1`] = `
 {
   "context": {
     "messages": [
@@ -636,14 +636,14 @@ exports[`onboardingMachine matches snapshot going through practice and completin
       {
         "id": Any<String>,
         "sender": "paula",
-        "text": "step3.tips",
+        "text": "step3.tipsAgree",
         "timestamp": Any<Number>,
         "type": "text",
       },
       {
         "id": Any<String>,
         "sender": "user",
-        "text": "Option 2",
+        "text": "Let's go",
         "timestamp": Any<Number>,
         "type": "text",
       },
@@ -658,13 +658,13 @@ exports[`onboardingMachine matches snapshot going through practice and completin
     "selectedOptions": [
       "option2-step1",
       "option2-step2",
-      "option2-step3",
+      "option1-step3",
     ],
     "typing": true,
   },
   "event": {
-    "optionText": "Option 2",
-    "type": "option2-step3",
+    "optionText": "Let's go",
+    "type": "option1-step3",
   },
   "nextEvents": [
     "PRACTICE_ANSWERED",

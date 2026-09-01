@@ -50,9 +50,11 @@
         "option3": "Attends, comment je sais ce qui est réel ?"
       },
       "step3": {
-        "tips": "Exactement ! Voici le secret : Cherche un langage exagéré, des sources manquantes, et des choses qui semblent TROP folles pour être vraies. Essaie le premier post - je te dirai comment tu t'en es sorti !",
-        "option1": "D'accord, j'entre dans le fil maintenant !",
-        "option2": "Montre-moi un exemple d'abord ?"
+        "tips": "Voici le secret : Cherche un langage exagéré, des sources manquantes, et des choses qui semblent TROP folles pour être vraies. Essaie le premier post - je te dirai comment tu t'en es sorti !",
+        "tipsAgree": "Exactement ! Voici le secret : Cherche un langage exagéré, des sources manquantes, et des choses qui semblent TROP folles pour être vraies. Essaie le premier post - je te dirai comment tu t'en es sorti !",
+        "tipsShowMe": "Voici comment ça marche. Cherche un langage exagéré, des sources manquantes, et des choses qui semblent TROP folles pour être vraies. Essaie le premier post - je te dirai comment tu t'en es sorti !",
+        "option1": "Allons-y ! Assez parlé !",
+        "option2": "Retour à l'accueil"
       },
       "practice": {
         "explanation": "Il y a deux types de publications que tu verras : les publications j'aime/je n'aime pas — aime si ça semble vrai, n'aime pas si ça semble faux — et les publications à choix multiples où tu choisis la meilleure réponse. Essayons-en une maintenant !"

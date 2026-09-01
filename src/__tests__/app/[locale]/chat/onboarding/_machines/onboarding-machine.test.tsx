@@ -115,13 +115,13 @@ describe('onboardingMachine', () => {
     });
     act(() =>
       result.current[1]({
-        type: 'option2-step3',
-        optionText: 'Option 2',
+        type: 'option1-step3',
+        optionText: "Let's go",
       } as OnboardingOptionEvent)
     );
 
     const normalized1 = normalizeForSnapshot(result.current[0]);
-    expect(normalized1).toMatchSnapshot('after selecting option2-step3 (practice state)');
+    expect(normalized1).toMatchSnapshot('after selecting option1-step3 (practice state)');
 
     act(() => {
       jest.advanceTimersByTime(1000);
@@ -149,6 +149,28 @@ describe('onboardingMachine', () => {
     );
 
     expect(result.current[0].value).toBe('step3');
+  });
+
+  it('routes return home from step3 to completed', () => {
+    const { result } = renderHook(() => useOnboardingMachine());
+
+    act(() =>
+      result.current[1]({
+        type: 'option1-step1',
+        optionText: "Let's do this",
+      } as OnboardingOptionEvent)
+    );
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() =>
+      result.current[1]({
+        type: 'option2-step3',
+        optionText: 'Return home',
+      } as OnboardingOptionEvent)
+    );
+
+    expect(result.current[0].value).toBe('completed');
   });
 
   it('routes step2 replies into step3 instead of skipping the secret', () => {

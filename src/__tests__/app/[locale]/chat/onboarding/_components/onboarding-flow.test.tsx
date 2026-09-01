@@ -165,6 +165,12 @@ describe('OnboardingFlow practice question', () => {
     act(() => {
       jest.advanceTimersByTime(1000);
     });
+    act(() => {
+      fireEvent.click(screen.getByText('step3.option1'));
+    });
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
   };
 
   it('renders the practice explanation message and the real first question', () => {
@@ -230,6 +236,12 @@ describe('OnboardingFlow practice question', () => {
     });
     act(() => {
       fireEvent.click(screen.getByText('step1.option3'));
+    });
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() => {
+      fireEvent.click(screen.getByText('step3.option1'));
     });
     act(() => {
       jest.advanceTimersByTime(1000);

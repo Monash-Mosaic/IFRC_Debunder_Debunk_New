@@ -162,6 +162,12 @@ describe('OnboardingFlow practice question (like/dislike)', () => {
     act(() => {
       jest.advanceTimersByTime(1000);
     });
+    act(() => {
+      fireEvent.click(screen.getByText('step3.option1'));
+    });
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
   };
 
   it('renders the practice explanation message and the real first question via LikeDislikePostMessage', () => {
