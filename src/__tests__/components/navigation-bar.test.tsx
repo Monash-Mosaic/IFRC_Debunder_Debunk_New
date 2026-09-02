@@ -26,9 +26,9 @@ describe('Navigation', () => {
       render(<Navigation />);
       expect(screen.getAllByText(/home/i).length).toBeGreaterThan(0);
       expect(screen.getAllByText(/chat/i).length).toBeGreaterThan(0);
-      expect(screen.queryAllByText(/analytics/i).length).toBe(0);
-      expect(screen.queryAllByText(/share/i).length).toBe(0);
-      expect(screen.queryAllByText(/profile/i).length).toBe(0);
+      expect(screen.queryAllByText(/analytics/i).length).toBeGreaterThan(0);
+      expect(screen.queryAllByText(/share/i).length).toBeGreaterThan(0);
+      expect(screen.queryAllByText(/profile/i).length).toBeGreaterThan(0);
     });
 
     it('highlights active navigation item', () => {
@@ -83,9 +83,14 @@ describe('Navigation', () => {
       const chatLinks = screen.getAllByRole('link', { name: /chat/i });
       expect(chatLinks[0]).toHaveAttribute('href', '/chat');
 
-      expect(screen.queryAllByRole('link', { name: /analytics/i }).length).toBe(0);
-      expect(screen.queryAllByRole('link', { name: /share/i }).length).toBe(0);
-      expect(screen.queryAllByRole('link', { name: /profile/i }).length).toBe(0);
+      const analyticsLinks = screen.getAllByRole('link', { name: /analytics/i });
+      expect(analyticsLinks[0]).toHaveAttribute('href', '/analytics');
+
+      const shareLinks = screen.getAllByRole('link', { name: /share/i });
+      expect(shareLinks[0]).toHaveAttribute('href', '/share');
+
+      const profileLinks = screen.getAllByRole('link', { name: /profile/i });
+      expect(profileLinks[0]).toHaveAttribute('href', '/profile');
     });
 
     it('renders icons for each navigation item', () => {
@@ -112,9 +117,9 @@ describe('Navigation', () => {
       render(<Navigation />);
       expect(screen.getAllByText(/home/i).length).toBeGreaterThan(0);
       expect(screen.getAllByText(/chat/i).length).toBeGreaterThan(0);
-      expect(screen.queryAllByText(/analytics/i).length).toBe(0);
-      expect(screen.queryAllByText(/share/i).length).toBe(0);
-      expect(screen.queryAllByText(/profile/i).length).toBe(0);
+      expect(screen.queryAllByText(/analytics/i).length).toBeGreaterThan(0);
+      expect(screen.queryAllByText(/share/i).length).toBeGreaterThan(0);
+      expect(screen.queryAllByText(/profile/i).length).toBeGreaterThan(0);
     });
 
     it('has correct mobile navigation positioning', () => {

@@ -3,7 +3,7 @@
 exports[`ChatHeadline matches snapshot with default props 1`] = `
 <div>
   <div
-    class="hidden md:block px-4"
+    class="hidden md:block px-4 ml-20"
   >
     <div
       class="flex items-center gap-3 mb-2"
@@ -30,7 +30,7 @@ exports[`ChatHeadline matches snapshot with default props 1`] = `
 exports[`ChatHeadline matches snapshot with different name 1`] = `
 <div>
   <div
-    class="hidden md:block px-4"
+    class="hidden md:block px-4 ml-20"
   >
     <div
       class="flex items-center gap-3 mb-2"
@@ -57,7 +57,7 @@ exports[`ChatHeadline matches snapshot with different name 1`] = `
 exports[`ChatHeadline matches snapshot with long name 1`] = `
 <div>
   <div
-    class="hidden md:block px-4"
+    class="hidden md:block px-4 ml-20"
   >
     <div
       class="flex items-center gap-3 mb-2"
@@ -84,7 +84,7 @@ exports[`ChatHeadline matches snapshot with long name 1`] = `
 exports[`ChatHeadline matches snapshot with special characters in name 1`] = `
 <div>
   <div
-    class="hidden md:block px-4"
+    class="hidden md:block px-4 ml-20"
   >
     <div
       class="flex items-center gap-3 mb-2"
