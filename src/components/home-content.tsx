@@ -196,7 +196,7 @@ export default function HomeContent() {
   return (
     <div
       className={cn(
-        'mx-auto flex w-full max-w-md flex-col overflow-hidden overscroll-y-contain md:max-w-none md:overflow-visible md:px-4',
+        'mx-auto flex w-full max-w-md flex-col overflow-hidden overscroll-y-contain md:max-w-none md:overflow-visible md:px-4 p-4',
         // Mobile: height matches main padding (pt-24 header+credibility + pb-16 bottom nav), not h-screen — avoids extra page scroll & top/bottom gaps
         'max-md:h-[calc(100dvh-10rem-env(safe-area-inset-bottom,0px))] max-md:min-h-0 max-md:touch-pan-y',
         'md:h-screen',
@@ -216,8 +216,8 @@ export default function HomeContent() {
             'max-md:items-stretch',
           )}
         >
-          {/* Carousel: fills mobile column; desktop keeps 70vh to pair with side arrows */}
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col items-stretch justify-stretch max-md:h-full md:h-[70vh] md:items-center md:justify-center">
+          {/* Carousel: fills mobile column; desktop keeps 80vh to pair with side arrows */}
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col items-stretch justify-stretch max-md:h-full md:h-[80vh] md:items-center md:justify-center">
             <VerticalCarousel
               options={{
                 axis: 'y',
@@ -249,7 +249,7 @@ export default function HomeContent() {
                       }}
                       key={contentItem.id}
                     >
-                      <div className="flex h-full items-center justify-center overflow-y-auto">
+                      <div className="flex h-full items-center md:items-start justify-center overflow-y-auto">
                         {contentItem.type === ContentType.MCQ ? (
                           <MCQPostMessage
                             postId={contentItem.id}
