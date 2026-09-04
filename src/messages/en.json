@@ -62,6 +62,7 @@
         "likeDislike": "This one is asking you to like or dislike. Like it if it looks true, dislike if it looks false.",
         "share": "This post is asking you to share or scroll. If the post looks dodgy, you should scroll."
       },
+      "returnHome": "Return home",
       "completed": {
         "message": "Game begins! You're all set to navigate the feed and identify misinformation. Good luck! 🎮"
       }

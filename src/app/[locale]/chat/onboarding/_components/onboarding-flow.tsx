@@ -110,6 +110,11 @@ export default function OnboardingFlow() {
     } as OnboardingOptionEvent);
   };
 
+  const handleReturnHome = () => {
+    storage.removeItem();
+    router.replace('/');
+  };
+
   // Move navigation and localStorage set to useEffect
   useEffect(() => {
     if (isCompleted) {
@@ -153,6 +158,10 @@ export default function OnboardingFlow() {
     movePracticeToNextQuestion();
     send({ type: 'PRACTICE_ANSWERED' });
   };
+
+  const canReturnHome =
+    !state.context.typing &&
+    (state.value === 'step2' || state.value === 'step3' || state.value === 'practice');
 
   if (isCompleted) {
     return null;
@@ -239,7 +248,7 @@ export default function OnboardingFlow() {
       </div>
 
       {/* Options Container */}
-      {!state.context.typing && currentOptions.length > 0 && (
+      {!state.context.typing && (currentOptions.length > 0 || canReturnHome) && (
         <div className="border-t border-[#E8E9ED] bg-white px-4 py-4 md:pb-4">
           <div className="mx-auto flex max-w-2xl flex-col gap-3">
             {currentOptions.map((option) => (
@@ -250,6 +259,13 @@ export default function OnboardingFlow() {
                 onClick={() => handleOptionClick(option.id, option.translationKey)}
               />
             ))}
+            {canReturnHome && (
+              <OptionButton
+                id="return-home"
+                displayText={t('returnHome')}
+                onClick={handleReturnHome}
+              />
+            )}
           </div>
         </div>
       )}

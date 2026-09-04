@@ -220,6 +220,26 @@ describe('OnboardingFlow practice question', () => {
     expect(window.localStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED)).toBe('true');
   });
 
+  it('returns to locale home without starting the quiz', () => {
+    render(<OnboardingFlow />);
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() => {
+      fireEvent.click(screen.getByText('step1.option3'));
+    });
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() => {
+      fireEvent.click(screen.getByText('returnHome'));
+    });
+
+    expect(mockReplace).toHaveBeenCalledWith('/');
+    expect(window.localStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED)).not.toBe('true');
+    expect(window.localStorage.getItem(STORAGE_KEYS.CHAT_ONBOARDING_STATE)).toBeNull();
+  });
+
   it('skips straight to completion on mount if the practice question was already answered', () => {
     mockIsAnswered.mockReturnValue(true);
     mockGetAnswer.mockReturnValue('opt-a');

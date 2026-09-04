@@ -62,6 +62,7 @@
         "likeDislike": "Celle-ci te demande d'aimer ou de ne pas aimer. Aime si ça a l'air vrai, n'aime pas si ça a l'air faux.",
         "share": "Cette publication te demande de partager ou de défiler. Si ça a l'air louche, défile."
       },
+      "returnHome": "Retour à l'accueil",
       "completed": {
         "message": "Le jeu commence ! Tu es prêt à naviguer dans le fil et identifier la désinformation. Bonne chance ! 🎮"
       }

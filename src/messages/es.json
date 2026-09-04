@@ -62,6 +62,7 @@
         "likeDislike": "Esta te pide dar me gusta o no me gusta. Me gusta si parece verdadera, no me gusta si parece falsa.",
         "share": "Esta publicación te pide compartir o seguir. Si se ve dudosa, sigue de largo."
       },
+      "returnHome": "Volver al inicio",
       "completed": {
         "message": "¡El juego comienza! Estás listo para navegar el feed e identificar la desinformación. ¡Buena suerte! 🎮"
       }
