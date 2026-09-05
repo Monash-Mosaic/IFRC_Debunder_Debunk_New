@@ -77,8 +77,8 @@ export default function MCQPostMessage({
 
       {/* Media attachment */}
       {mediaUrl && mediaType === 'image' && (
-        <div className="relative mb-4 w-full overflow-hidden rounded-lg bg-[#E8E9ED]">
-          <div className="aspect-video w-full">
+        <div className="relative mb-4 w-full overflow-hidden rounded-lg flex items-center justify-center">
+          <div className="aspect-video lg:w-[50%] w-[70%]">
             <Image
               src={mediaUrl}
               alt="Question post"
