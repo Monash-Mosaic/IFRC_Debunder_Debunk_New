@@ -3,6 +3,8 @@ import { act, fireEvent, render, screen } from '@/test-utils/test-utils';
 import OnboardingFlow from '@/app/[locale]/chat/onboarding/_components/onboarding-flow';
 import { useCredibilityStore } from '@/lib/use-credibility-store';
 import { STORAGE_KEYS } from '@/lib/local-storage';
+import CONTENTS from '@/contents';
+import { ContentType } from '@/contents/en';
 
 // NOTE: deviation from the brief — jsdom does not implement Element.scrollIntoView,
 // and OnboardingFlow calls messagesEndRef.current?.scrollIntoView(...) in a useEffect
@@ -172,6 +174,25 @@ describe('OnboardingFlow practice question', () => {
 
     expect(screen.getByText('practice.explanation')).toBeInTheDocument();
     expect(screen.getByTestId('practice-mcq-post-practice-mcq')).toBeInTheDocument();
+  });
+
+  it('does not fall through to Like/Report for an unsupported practice post', () => {
+    const originalItem = CONTENTS.en.contentList[0];
+    CONTENTS.en.contentList[0] = {
+      id: 'unsupported-share',
+      type: ContentType.SHARE,
+      correctAnswer: 'share',
+      whyCorrectAnswer: { title: null, content: null },
+      whyIncorrectAnswer: { title: null, content: null },
+    };
+    try {
+      advanceToPractice();
+      expect(screen.queryByRole('article')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /like|report|dislike/i })).not.toBeInTheDocument();
+      expect(mockSetAnswer).not.toHaveBeenCalled();
+    } finally {
+      CONTENTS.en.contentList[0] = originalItem;
+    }
   });
 
   it('awards points and credibility on a correct practice answer, then shows the modal', () => {

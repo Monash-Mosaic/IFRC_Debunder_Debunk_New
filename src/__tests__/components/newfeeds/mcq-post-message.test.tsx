@@ -96,5 +96,38 @@ describe('MCQPostMessage', () => {
 
       expect(mockOnAnswer).not.toHaveBeenCalled();
     });
+
+    it('does not call onAnswer when the post is disabled', async () => {
+      const user = userEvent.setup();
+      render(<MCQPostMessage {...defaultProps} isDisabled />);
+      await user.click(screen.getByRole('button', { name: 'Option B' }));
+      expect(defaultProps.onAnswer).not.toHaveBeenCalled();
+    });
+
+    it('supports keyboard answer selection without submitting an enclosing form', async () => {
+      const onSubmit = jest.fn((event) => event.preventDefault());
+      const user = userEvent.setup();
+      render(<form onSubmit={onSubmit}><MCQPostMessage {...defaultProps} /></form>);
+      await user.tab();
+      expect(screen.getByRole('button', { name: 'Option A' })).toHaveFocus();
+      await user.keyboard('{Enter}');
+      expect(defaultProps.onAnswer).toHaveBeenCalledWith('mcq-1', 'a');
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
+
+    it.each([null, 'a', 'b'])('shows only answer options without percentages for answer %s', (answer) => {
+      const { container } = render(<MCQPostMessage {...defaultProps} answer={answer} />);
+      expect(screen.getAllByRole('button')).toHaveLength(defaultProps.options.length);
+      expect(container).not.toHaveTextContent(/\d\s*%/);
+      for (const option of defaultProps.options) {
+        expect(screen.getByRole('button', { name: option.label })).toHaveAttribute('aria-pressed', String(answer === option.id));
+      }
+    });
+
+    it('preserves incorrect-selection and correct-answer feedback', () => {
+      render(<MCQPostMessage {...defaultProps} answer="b" />);
+      expect(screen.getByRole('button', { name: 'Option B' })).toHaveClass('bg-[#FF1E56]');
+      expect(screen.getByRole('button', { name: 'Option A' })).toHaveClass('bg-[#00FF9C]');
+    });
   });
 });
