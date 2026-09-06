@@ -102,6 +102,11 @@ export enum ContentType {
   MCQ = 'mcq',
 }
 
+export enum InteractionMode {
+  None = 'none',
+  LikeReport = 'like-report',
+}
+
 export interface ContentBase {
   id: ContentId;
   type: ContentType;

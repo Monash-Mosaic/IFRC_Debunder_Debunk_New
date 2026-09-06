@@ -1,9 +1,9 @@
 'use client';
 
 import PostMessage, { PostMessageProps } from '@/app/[locale]/chat/onboarding/_components/post-message';
-import { User } from '@/contents/en';
+import { InteractionMode, type User } from '@/contents/en';
 
-export interface LikeDislikePostMessageProps extends Omit<PostMessageProps, 'likeDisabled' | 'dislikeDisabled' | 'commentDisabled' | 'shareDisabled' | 'onLike' | 'onDislike' | 'interactionMode'> {
+export interface LikeDislikePostMessageProps extends Omit<PostMessageProps, 'likeDisabled' | 'dislikeDisabled' | 'commentDisabled' | 'shareDisabled' | 'onLike' | 'onDislike' | 'interactionMode' | 'selectedAction'> {
   postId: string;
   answer: 'like' | 'dislike' | null | undefined;
   correctAnswer: 'like' | 'dislike';
@@ -58,18 +58,20 @@ export default function LikeDislikePostMessage({
 
   return (
     <PostMessage
+      {...postMessageProps}
       user={user}
       content={content}
-      onLike={handleLike}
-      onDislike={handleDislike}
+      onLike={onLike ? handleLike : undefined}
+      onDislike={onDislike ? handleDislike : undefined}
+      isDisabled={isDisabled}
       likeClassName={likeClassName}
       dislikeClassName={dislikeClassName}
       likeDisabled={hasAnswered || isDisabled}
       dislikeDisabled={hasAnswered || isDisabled}
       mediaUrl={mediaUrl}
       mediaType={mediaType}
-      {...postMessageProps}
-      interactionMode="like-report"
+      interactionMode={InteractionMode.LikeReport}
+      selectedAction={currentAnswer}
     />
   );
 }

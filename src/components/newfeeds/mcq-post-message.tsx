@@ -94,10 +94,12 @@ export default function MCQPostMessage({
         {options.map((option) => (
           <button
             key={option.id}
+            type="button"
+            aria-pressed={answer === option.id}
             disabled={hasAnswered || isDisabled}
             onClick={() => onAnswer(postId, option.id)}
             className={cn(
-              'w-full text-left rounded-lg px-4 py-3 text-sm font-medium border transition-colors',
+              'w-full min-h-12 text-start rounded-lg px-4 py-3 text-sm font-medium border transition-colors',
               getOptionClass(option.id)
             )}
           >
