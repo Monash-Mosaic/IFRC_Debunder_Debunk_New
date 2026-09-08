@@ -6,7 +6,7 @@
 import React from 'react';
 import { render, screen, act } from '@/test-utils/test-utils';
 import userEvent from '@testing-library/user-event';
-import HomeContent from '@/components/home-content';
+import GameFeed from '@/components/game-feed';
 import { useCredibilityStore } from '@/lib/use-credibility-store';
 
 jest.mock('next-intl', () => ({
@@ -136,7 +136,7 @@ jest.mock('@/components/vertical-carousel', () => {
   };
 });
 
-describe('HomeContent navigation', () => {
+describe('GameFeed navigation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetAnswer.mockReturnValue(null);
@@ -162,7 +162,7 @@ describe('HomeContent navigation', () => {
 
   it('shows a toast when next is clicked but the current post is not engaged', async () => {
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     // canScrollNext=true but isAnswered=false means next is locked
     const nextButton = screen.getByRole('button', { name: 'Next post' });
@@ -177,7 +177,7 @@ describe('HomeContent navigation', () => {
     mockSelectedScrollSnap.mockReturnValue(1);
 
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     const nextButton = screen.getByRole('button', { name: 'Next post' });
     await user.click(nextButton);
@@ -191,7 +191,7 @@ describe('HomeContent navigation', () => {
     mockCanScrollNext.mockReturnValue(true);
 
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     const nextButton = screen.getByRole('button', { name: 'Next post' });
     await user.click(nextButton);
@@ -204,7 +204,7 @@ describe('HomeContent navigation', () => {
     mockSelectedScrollSnap.mockReturnValue(0);
 
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     const prevButton = screen.getByRole('button', { name: 'Previous post' });
     await user.click(prevButton);
@@ -218,7 +218,7 @@ describe('HomeContent navigation', () => {
     mockSelectedScrollSnap.mockReturnValue(1);
 
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     const prevButton = screen.getByRole('button', { name: 'Previous post' });
     await user.click(prevButton);
@@ -228,7 +228,7 @@ describe('HomeContent navigation', () => {
 
   it('dismisses the toast when its close button is clicked', async () => {
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     // Trigger a toast first
     await user.click(screen.getByRole('button', { name: 'Next post' }));

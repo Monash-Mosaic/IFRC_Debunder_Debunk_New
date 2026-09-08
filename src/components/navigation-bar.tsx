@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Link, routing, usePathname } from '@/i18n/routing';
+import BlockedHomeLink from '@/components/blocked-home-link';
 import { Home, MessageSquare } from 'lucide-react';
 
 interface NavItem {
@@ -39,7 +40,20 @@ export default function Navigation() {
             const isActive =
               pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
 
-            return (
+            return item.href === '/' ? (
+              <BlockedHomeLink
+                key={item.href}
+                href="/"
+                className={`group flex flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 transition-colors ${
+                  isActive ? 'text-(--color-ifrc-red)' : 'text-(--color-ifrc-blue) hover:text-(--color-ifrc-red)'
+                }`}
+              >
+                <span className="transition-transform group-hover:scale-110">
+                  {isActive ? item.activeIcon : item.icon}
+                </span>
+                <span className="text-[11px] font-medium">{t(item.labelKey)}</span>
+              </BlockedHomeLink>
+            ) : (
               <Link
                 key={item.href}
                 href={item.href}
@@ -64,7 +78,20 @@ export default function Navigation() {
             const isActive =
               pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
 
-            return (
+            return item.href === '/' ? (
+              <BlockedHomeLink
+                key={item.href}
+                href="/"
+                className={`group flex flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 transition-colors ${
+                  isActive ? 'text-(--color-ifrc-red)' : 'text-(--color-ifrc-blue) hover:text-(--color-ifrc-red)'
+                }`}
+              >
+                <span className="transition-transform group-hover:scale-110">
+                  {isActive ? item.activeIcon : item.icon}
+                </span>
+                <span className="text-[11px] font-medium">{t(item.labelKey)}</span>
+              </BlockedHomeLink>
+            ) : (
               <Link
                 key={item.href}
                 href={item.href}

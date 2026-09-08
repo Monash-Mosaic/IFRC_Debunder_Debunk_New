@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import loadDynamicComponent from 'next/dynamic';
 import Loading from '@/components/loading';
 import { useTranslations } from 'next-intl';
@@ -21,10 +22,11 @@ const OnboardingFlow = loadDynamicComponent(() => import('./_components/onboardi
 export default function OnboardingPage() {
   return (
     <div className="mx-auto flex flex-col md:px-4 md:pt-6">
-      {/* Headline */}
       <ChatHeadline name={CHAT_USERS.paula.name} />
       <div className="mx-auto flex items-center justify-center h-[calc(100vh-10rem)] max-w-md flex-col w-full">
-        <OnboardingFlow />
+        <Suspense fallback={<OnboardingLoadingFallback />}>
+          <OnboardingFlow />
+        </Suspense>
       </div>
     </div>
   );

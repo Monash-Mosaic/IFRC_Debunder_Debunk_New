@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@/test-utils/test-utils';
 import userEvent from '@testing-library/user-event';
 import HomeContent from '@/components/home-content';
+import GameFeed from '@/components/game-feed';
 import { createGameStore } from '@/lib/use-game-store';
 import { useCredibilityStore } from '@/lib/use-credibility-store';
 import { STORAGE_KEYS } from '@/lib/local-storage';
@@ -319,6 +320,35 @@ const mockInitCredibility = jest.fn();
 const mockResetCredibility = jest.fn();
 
 describe('HomeContent', () => {
+  const mockPush = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (global as any).mockUseRouter.mockReturnValue({
+      push: mockPush,
+      replace: jest.fn(),
+      prefetch: jest.fn(),
+    });
+  });
+
+  it('renders chat content', () => {
+    render(<HomeContent />);
+    expect(screen.getByTestId('chat-content')).toBeInTheDocument();
+  });
+
+  it('navigates to onboarding game when skip is clicked', async () => {
+    const user = userEvent.setup();
+    render(<HomeContent />);
+
+    await user.click(screen.getByTestId('skip-onboarding'));
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/chat/onboarding',
+      query: { start: 'game' },
+    });
+  });
+});
+
+describe('GameFeed', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
@@ -326,7 +356,6 @@ describe('HomeContent', () => {
     mockIsAnswered.mockReturnValue(false);
     mockIsPostDisabled.mockReturnValue(false);
     mockIsGameCompleted.mockReturnValue(false);
-    mockUseLocalStorage.mockReturnValue([true, mockSetOnboardingCompleted]);
 
     jest.mocked(useCredibilityStore).mockReturnValue({
       addPoints: mockAddPoints,
@@ -337,19 +366,8 @@ describe('HomeContent', () => {
     });
   });
 
-  it('renders chat content when onboarding is not completed', () => {
-    // Reset mock to return false for this test
-    mockUseLocalStorage.mockReturnValue([false, jest.fn()]); // onboardingCompleted = false
-
-    render(<HomeContent />);
-    expect(screen.getByTestId('chat-content')).toBeInTheDocument();
-    
-    // Reset back to default for other tests
-    mockUseLocalStorage.mockReturnValue([true, mockSetOnboardingCompleted]);
-  });
-
-  it('renders posts when onboarding is completed', () => {
-    render(<HomeContent />);
+  it('renders posts', () => {
+    render(<GameFeed />);
     expect(screen.getByTestId('post-1')).toBeInTheDocument();
     expect(screen.getByTestId('post-2')).toBeInTheDocument();
   });
@@ -361,7 +379,7 @@ describe('HomeContent', () => {
       return null;
     });
 
-    render(<HomeContent />);
+    render(<GameFeed />);
     
     expect(screen.getByTestId('answer-1')).toHaveTextContent('like');
     expect(screen.getByTestId('answer-2')).toHaveTextContent('dislike');
@@ -369,7 +387,7 @@ describe('HomeContent', () => {
 
   it('decreases credibility on incorrect answer', async () => {
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     // Answer incorrectly (post 1 correct answer is 'like', we'll answer 'dislike')
     const dislikeButton = screen.getByTestId('dislike-1');
@@ -382,7 +400,7 @@ describe('HomeContent', () => {
 
   it('awards points and does not decrease credibility on correct answer', async () => {
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     // Post 1 correct answer is 'like'
     const likeButton = screen.getByTestId('like-1');
@@ -396,7 +414,7 @@ describe('HomeContent', () => {
   it('does not allow changing answer for previously answered questions', async () => {
     mockIsAnswered.mockReturnValue(true);
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     // Try to answer an already answered question
     const likeButton = screen.getByTestId('like-1');
@@ -424,7 +442,7 @@ describe('HomeContent', () => {
     });
     
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     // First, answer the question to show the modal
     const likeButton = screen.getByTestId('like-1');
@@ -452,7 +470,7 @@ describe('HomeContent', () => {
       return null;
     });
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     // Answer the question first
     const likeButton = screen.getByTestId('like-1');
@@ -479,7 +497,7 @@ describe('HomeContent', () => {
     });
 
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     // Answer incorrectly
     const dislikeButton = screen.getByTestId('dislike-1');
@@ -490,7 +508,7 @@ describe('HomeContent', () => {
   });
 
   it('passes correct answer to LikeDislikePostMessage', () => {
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     expect(screen.getByTestId('correct-1')).toHaveTextContent('like');
     expect(screen.getByTestId('correct-2')).toHaveTextContent('dislike');
@@ -498,13 +516,13 @@ describe('HomeContent', () => {
 
   describe('MCQ content', () => {
     it('renders MCQ post', () => {
-      render(<HomeContent />);
+      render(<GameFeed />);
       expect(screen.getByTestId('mcq-post-mcq-1')).toBeInTheDocument();
     });
 
     it('awards points and does not decrease credibility on correct MCQ answer', async () => {
       const user = userEvent.setup();
-      render(<HomeContent />);
+      render(<GameFeed />);
 
       // opt-a is correct (correctOptionId is opt-a)
       await user.click(screen.getByTestId('mcq-option-mcq-1'));
@@ -517,7 +535,7 @@ describe('HomeContent', () => {
 
     it('decreases credibility on incorrect MCQ answer', async () => {
       const user = userEvent.setup();
-      render(<HomeContent />);
+      render(<GameFeed />);
 
       // opt-b is incorrect (correctOptionId is opt-a)
       await user.click(screen.getByTestId('mcq-option-incorrect-mcq-1'));
@@ -530,7 +548,7 @@ describe('HomeContent', () => {
     it('does not allow changing answer for a previously answered MCQ question', async () => {
       mockIsAnswered.mockReturnValue(true);
       const user = userEvent.setup();
-      render(<HomeContent />);
+      render(<GameFeed />);
 
       await user.click(screen.getByTestId('mcq-option-mcq-1'));
 
@@ -540,7 +558,7 @@ describe('HomeContent', () => {
     it('does not answer MCQ when the post is disabled', async () => {
       mockIsPostDisabled.mockReturnValue(true);
       const user = userEvent.setup();
-      render(<HomeContent />);
+      render(<GameFeed />);
 
       await user.click(screen.getByTestId('mcq-option-mcq-1'));
 
@@ -550,7 +568,7 @@ describe('HomeContent', () => {
     it('opens modal for MCQ answers', async () => {
       mockGetAnswer.mockImplementation((postId: string) => postId === 'mcq-1' ? 'opt-a' : null);
       const user = userEvent.setup();
-      render(<HomeContent />);
+      render(<GameFeed />);
 
       await user.click(screen.getByTestId('mcq-option-mcq-1'));
 
@@ -563,7 +581,7 @@ describe('HomeContent', () => {
       });
 
       const user = userEvent.setup();
-      render(<HomeContent />);
+      render(<GameFeed />);
 
       await user.click(screen.getByTestId('mcq-option-mcq-1'));
 
@@ -579,7 +597,7 @@ describe('HomeContent', () => {
       });
 
       const user = userEvent.setup();
-      render(<HomeContent />);
+      render(<GameFeed />);
 
       await user.click(screen.getByTestId('mcq-option-incorrect-mcq-1'));
 
@@ -596,7 +614,7 @@ describe('HomeContent', () => {
       mockGetAnswer.mockImplementation((postId: string) => postId === 'mcq-1' && answerSet ? 'opt-a' : null);
 
       const user = userEvent.setup();
-      render(<HomeContent />);
+      render(<GameFeed />);
 
       await user.click(screen.getByTestId('mcq-option-mcq-1'));
       await user.click(await screen.findByTestId('close-modal-mcq-1'));
@@ -611,7 +629,7 @@ describe('HomeContent', () => {
       mockGetAnswer.mockImplementation((postId: string) => (postId === 'mcq-1' && answerSet ? 'opt-a' : null));
 
       const user = userEvent.setup();
-      render(<HomeContent />);
+      render(<GameFeed />);
 
       await user.click(screen.getByTestId('mcq-option-mcq-1'));
 
@@ -624,21 +642,9 @@ describe('HomeContent', () => {
     });
   });
 
-  it('marks onboarding complete when skip is clicked', async () => {
-    mockUseLocalStorage.mockReturnValue([false, mockSetOnboardingCompleted]);
-
-    const user = userEvent.setup();
-    render(<HomeContent />);
-
-    await user.click(screen.getByTestId('skip-onboarding'));
-    expect(mockSetOnboardingCompleted).toHaveBeenCalledWith(true);
-
-    mockUseLocalStorage.mockReturnValue([true, mockSetOnboardingCompleted]);
-  });
-
   it('increments correct answers on a correct response', async () => {
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     await user.click(screen.getByTestId('like-1'));
     expect(mockIncrCorrectAnswers).toHaveBeenCalled();
@@ -647,7 +653,7 @@ describe('HomeContent', () => {
   it('does not answer when the post is disabled', async () => {
     mockIsPostDisabled.mockReturnValue(true);
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     await user.click(screen.getByTestId('like-1'));
     expect(mockSetAnswer).not.toHaveBeenCalled();
@@ -658,7 +664,7 @@ describe('HomeContent', () => {
     mockGetCorrectAnswers.mockReturnValue(2);
     mockGetNumQuestions.mockReturnValue(2);
 
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     expect(screen.getByTestId('game-complete')).toBeInTheDocument();
     expect(screen.getByTestId('game-score')).toHaveTextContent('2/2');
@@ -668,12 +674,11 @@ describe('HomeContent', () => {
     mockIsGameCompleted.mockReturnValue(true);
     const user = userEvent.setup();
 
-    render(<HomeContent />);
+    render(<GameFeed />);
     await user.click(screen.getByTestId('restart-game'));
 
     expect(mockResetGame).toHaveBeenCalled();
     expect(mockResetCredibility).toHaveBeenCalled();
-    expect(mockSetOnboardingCompleted).toHaveBeenCalledWith(false);
   });
 
   it('shows incorrect answer feedback in the modal', async () => {
@@ -682,7 +687,7 @@ describe('HomeContent', () => {
     });
 
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     await user.click(screen.getByTestId('dislike-1'));
 
@@ -698,7 +703,7 @@ describe('HomeContent', () => {
     });
 
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     await user.click(screen.getByTestId('like-1'));
 
@@ -711,7 +716,7 @@ describe('HomeContent', () => {
   it('sets modal app element on mount', () => {
     const setAppElementSpy = jest.spyOn(require('react-modal'), 'setAppElement');
 
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     expect(setAppElementSpy).toHaveBeenCalled();
     setAppElementSpy.mockRestore();
@@ -724,7 +729,7 @@ describe('HomeContent', () => {
     mockGetAnswer.mockImplementation((postId: string) => (postId === '1' && answerSet ? 'like' : null));
 
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     await user.click(screen.getByTestId('like-1'));
 
@@ -741,7 +746,7 @@ describe('HomeContent', () => {
     mockGetAnswer.mockImplementation((postId: string) => (postId === '1' ? 'like' : null));
 
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     await user.click(screen.getByTestId('like-1'));
 

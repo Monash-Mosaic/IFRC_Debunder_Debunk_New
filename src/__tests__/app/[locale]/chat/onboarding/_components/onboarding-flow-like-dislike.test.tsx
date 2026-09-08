@@ -108,6 +108,12 @@ jest.mock('@/components/newfeeds/prebunking-modal', () => {
   };
 });
 
+jest.mock('@/components/game-feed', () => {
+  return function MockGameFeed() {
+    return <div data-testid="game-feed">Game Feed</div>;
+  };
+});
+
 const mockAddPoints = jest.fn();
 const mockIncreaseCredibility = jest.fn();
 const mockDecreaseCredibility = jest.fn();
@@ -121,6 +127,7 @@ describe('OnboardingFlow practice question (like/dislike)', () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2020-08-20T00:12:00.000Z'));
     window.localStorage.clear();
+    window.history.replaceState({}, '', '/');
 
     mockGetAnswer.mockReturnValue(null);
     mockIsAnswered.mockReturnValue(false);
@@ -202,7 +209,7 @@ describe('OnboardingFlow practice question (like/dislike)', () => {
     expect(screen.getByTestId('practice-modal-header-practice-like-dislike')).toHaveTextContent('Practice Incorrect Title');
   });
 
-  it('advances to the main feed after the practice modal is dismissed', () => {
+  it('shows the game feed on the onboarding route after the practice modal is dismissed', () => {
     advanceToPractice();
 
     act(() => {
@@ -213,6 +220,7 @@ describe('OnboardingFlow practice question (like/dislike)', () => {
     });
 
     expect(mockMoveToNextQuestion).not.toHaveBeenCalled();
-    expect(mockReplace).toHaveBeenCalledWith('/');
+    expect(mockReplace).not.toHaveBeenCalled();
+    expect(screen.getByTestId('game-feed')).toBeInTheDocument();
   });
 });

@@ -1,7 +1,7 @@
 'use client';
 
 import Illustration from './icons/onboarding-illustration';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 
 interface ChatContentProps {
   startOnboardingText: string;
