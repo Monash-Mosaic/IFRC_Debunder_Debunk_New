@@ -5,7 +5,7 @@
 import React from 'react';
 import { render, screen } from '@/test-utils/test-utils';
 import userEvent from '@testing-library/user-event';
-import HomeContent from '@/components/home-content';
+import GameFeed from '@/components/game-feed';
 
 jest.mock('next-intl', () => ({
   useTranslations: jest.fn(() => (key: string) => key),
@@ -88,7 +88,7 @@ jest.mock('@/components/vertical-carousel', () => {
   };
 });
 
-describe('HomeContent game completion (real game store)', () => {
+describe('GameFeed game completion (real game store)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     window.localStorage.clear();
@@ -108,7 +108,7 @@ describe('HomeContent game completion (real game store)', () => {
 
   it('shows the game complete screen after answering every question', async () => {
     const user = userEvent.setup();
-    render(<HomeContent />);
+    render(<GameFeed />);
 
     await user.click(screen.getByTestId('like-1'));
     await user.click(await screen.findByTestId('continue-modal-1'));

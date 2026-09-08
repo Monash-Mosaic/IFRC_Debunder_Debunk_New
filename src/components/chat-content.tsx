@@ -1,7 +1,7 @@
 'use client';
 
 import Illustration from './icons/onboarding-illustration';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 
 interface ChatContentProps {
   startOnboardingText: string;
@@ -29,13 +29,13 @@ export default function ChatContent({ startOnboardingText, skipText, onSkipClick
           </Link>
 
           {/* Secondary Button - Skip */}
-          <Link
-            href="#"
+          <button
+            type="button"
             className="rounded-3xl border-1 border-dashed border-[#011E41] bg-[#E4EAF3] px-6 py-4 text-center font-medium text-black transition-all hover:bg-[#E8E9ED]"
             onClick={onSkipClick}
           >
             {skipText}
-          </Link>
+          </button>
         </div>
       </div>
     </div>

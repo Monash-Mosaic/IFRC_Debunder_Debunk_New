@@ -9,6 +9,7 @@ declare global {
       prefetch: jest.MockedFunction<(url: string) => void>;
     }
   >;
+  var mockUseSearchParams: jest.MockedFunction<() => URLSearchParams>;
 }
 
 export {};

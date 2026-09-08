@@ -79,10 +79,12 @@ const mockUseRouter = jest.fn(() => ({
   replace: jest.fn(),
   prefetch: jest.fn(),
 }));
+const mockUseSearchParams = jest.fn(() => new URLSearchParams());
 
 jest.mock('next/navigation', () => ({
   usePathname: () => mockUsePathname(),
   useRouter: () => mockUseRouter(),
+  useSearchParams: () => mockUseSearchParams(),
 }));
 
 // Mock next-intl routing
@@ -101,3 +103,4 @@ jest.mock('@/i18n/routing', () => ({
 // Make mocks available globally for tests
 global.mockUsePathname = mockUsePathname;
 global.mockUseRouter = mockUseRouter;
+global.mockUseSearchParams = mockUseSearchParams;

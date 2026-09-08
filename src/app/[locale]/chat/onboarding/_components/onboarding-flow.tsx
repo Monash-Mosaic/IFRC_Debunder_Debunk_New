@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { initialContextValue, useOnboardingMachine } from '../_machines/onboarding-machine';
 import UserTextMessage from './user-text-message';
@@ -22,6 +23,14 @@ import { ContentType, LikeDislikeContent, MCQContent } from '@/contents/en';
 import MCQPostMessage from '@/components/newfeeds/mcq-post-message';
 import LikeDislikePostMessage from '@/components/newfeeds/like-dislike-post-message';
 import PrebunkingModal from '@/components/newfeeds/prebunking-modal';
+import GameFeed from '@/components/game-feed';
+import {
+  pushOnboardingHistoryState,
+  readOnboardingHistoryState,
+  replaceOnboardingHistoryState,
+  type OnboardingHistoryPhase,
+} from '@/lib/onboarding-browser-state';
+import { setGameNavigationBlocked } from '@/lib/game-navigation-block';
 
 interface StoredOnboardingState {
   context: OnboardingContext | undefined;
@@ -30,23 +39,34 @@ interface StoredOnboardingState {
 
 const VALID_ONBOARDING_STATES = ['initial', 'step2', 'step3', 'practice', 'completed'];
 
-export default function OnboardingFlow() {
-  const locale = useLocale();
-  const t = useTranslations('chat.onboarding');
+function getInitialOnboardingState() {
+  const historyState = readOnboardingHistoryState();
   const storage = getStorage<StoredOnboardingState>(STORAGE_KEYS.CHAT_ONBOARDING_STATE);
   const persisted = storage.getItem({
     context: initialContextValue,
     state: 'initial',
   });
-  // Guard against stale persisted state referencing a state that no longer exists in the
-  // machine (e.g. the removed `example` state) — fall back to a fresh initial state instead
-  // of crashing when the machine library looks up an unknown state name.
   const isPersistedStateValid = VALID_ONBOARDING_STATES.includes(persisted.state ?? '');
-  const context = isPersistedStateValid ? persisted.context : initialContextValue;
-  const initialState = isPersistedStateValid ? persisted.state : 'initial';
+
+  return {
+    context: isPersistedStateValid ? persisted.context : initialContextValue,
+    machineState: isPersistedStateValid ? persisted.state : 'initial',
+    historyContext: historyState?.context,
+  };
+}
+
+interface OnboardingChatProps {
+  onEnterGame: (context: OnboardingContext) => void;
+}
+
+function OnboardingChat({ onEnterGame }: OnboardingChatProps) {
+  const locale = useLocale();
+  const t = useTranslations('chat.onboarding');
+  const storage = getStorage<StoredOnboardingState>(STORAGE_KEYS.CHAT_ONBOARDING_STATE);
+  const { context, machineState } = getInitialOnboardingState();
   const [state, send, { currentOptions, isCompleted }] = useOnboardingMachine(
     context,
-    initialState
+    machineState
   );
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -64,19 +84,30 @@ export default function OnboardingFlow() {
   const [exampleAnswer, setExampleAnswer] = useState<string | null>(null);
   const [showPracticeModal, setShowPracticeModal] = useState(false);
   const isPracticeState = state.value === 'practice';
+  const hasEnteredGameRef = useRef(false);
 
   useEffect(() => {
     if (isCompleted) {
-      storage.removeItem();
-    } else {
-      storage.setItem({
-        context: state.context,
-        state: state.value,
-      });
-    }
-  }, [storage, state, isCompleted]);
+      if (hasEnteredGameRef.current) return;
 
-  // Scroll to bottom when new messages are added
+      hasEnteredGameRef.current = true;
+      storage.removeItem();
+      localStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, true);
+      onEnterGame(state.context);
+      return;
+    }
+
+    storage.setItem({
+      context: state.context,
+      state: state.value,
+    });
+    replaceOnboardingHistoryState({
+      phase: 'onboarding',
+      machineState: state.value,
+      context: state.context,
+    });
+  }, [storage, state, isCompleted, onEnterGame]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [state.context.messages]);
@@ -93,14 +124,6 @@ export default function OnboardingFlow() {
     router.replace('/');
   };
 
-  // Move navigation and localStorage set to useEffect
-  useEffect(() => {
-    if (isCompleted) {
-      localStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, true);
-      router.replace('/');
-    }
-  }, [isCompleted, router]);
-
   const handlePracticeAnswer = (_postId: string, answer: string) => {
     if (exampleAnswer) return;
     setExampleAnswer(answer);
@@ -116,13 +139,8 @@ export default function OnboardingFlow() {
     !state.context.typing &&
     (state.value === 'step2' || state.value === 'step3' || state.value === 'practice');
 
-  if (isCompleted) {
-    return null;
-  }
-
   return (
     <div className="flex h-full flex-col w-full">
-      {/* Messages Container */}
       <div className="flex-1 space-y-4 overflow-y-auto px-4 py-6">
         {state.context.messages.map((message: Message) => {
           const sender = CHAT_USERS[message.sender as keyof typeof CHAT_USERS];
@@ -168,7 +186,6 @@ export default function OnboardingFlow() {
           }
         })}
 
-        {/* Interactive practice question: the real first game question, answerable in chat */}
         {isPracticeState && !state.context.typing && (
           practiceItem.type === ContentType.MCQ ? (
             <MCQPostMessage
@@ -200,7 +217,6 @@ export default function OnboardingFlow() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Options Container */}
       {!state.context.typing && (currentOptions.length > 0 || canReturnHome) && (
         <div className="border-t border-[#E8E9ED] bg-white px-4 py-4 md:pb-4">
           <div className="mx-auto flex max-w-2xl flex-col gap-3">
@@ -223,7 +239,6 @@ export default function OnboardingFlow() {
         </div>
       )}
 
-      {/* Practice question feedback modal — same component the real feed uses */}
       {showPracticeModal && (() => {
         const isCorrect = practiceItem.type === ContentType.MCQ
           ? exampleAnswer === (practiceItem as MCQContent).correctOptionId
@@ -249,4 +264,61 @@ export default function OnboardingFlow() {
       })()}
     </div>
   );
+}
+
+export default function OnboardingFlow() {
+  const searchParams = useSearchParams();
+  const shouldStartGame = searchParams.get('start') === 'game';
+  const initialHistoryState = readOnboardingHistoryState();
+  const [viewPhase, setViewPhase] = useState<OnboardingHistoryPhase>(
+    shouldStartGame || initialHistoryState?.phase === 'game' ? 'game' : 'onboarding'
+  );
+  const [chatKey, setChatKey] = useState(0);
+  const hasInitializedGameStartRef = useRef(false);
+
+  const handleEnterGame = useCallback((context: OnboardingContext) => {
+    pushOnboardingHistoryState({
+      phase: 'game',
+      machineState: 'completed',
+      context,
+    });
+    setViewPhase('game');
+  }, []);
+
+  useEffect(() => {
+    if (!shouldStartGame || hasInitializedGameStartRef.current) return;
+
+    hasInitializedGameStartRef.current = true;
+    pushOnboardingHistoryState({
+      phase: 'game',
+      machineState: 'completed',
+    });
+    localStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, true);
+    setViewPhase('game');
+  }, [shouldStartGame]);
+
+  useEffect(() => {
+    setGameNavigationBlocked(viewPhase === 'game');
+    return () => setGameNavigationBlocked(false);
+  }, [viewPhase]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const nextHistoryState = readOnboardingHistoryState();
+      const nextPhase = nextHistoryState?.phase === 'game' ? 'game' : 'onboarding';
+      setViewPhase(nextPhase);
+      if (nextPhase === 'onboarding') {
+        setChatKey((current) => current + 1);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  if (viewPhase === 'game') {
+    return <GameFeed />;
+  }
+
+  return <OnboardingChat key={chatKey} onEnterGame={handleEnterGame} />;
 }

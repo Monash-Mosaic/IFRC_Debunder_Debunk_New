@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/routing';
+import BlockedHomeLink from './blocked-home-link';
 import Title from './title';
 
 export default async function Header() {
@@ -12,7 +12,7 @@ export default async function Header() {
         {/* Left: IFRC Logo (hidden on mobile) */}
         <div className="hidden items-center gap-2 md:flex">
           <div className="flex items-center gap-1">
-            <Link href="/">
+            <BlockedHomeLink href="/">
               <Image
                 src="/images/logos/IFRC-Solferino.png"
                 alt={t('ifrcLogoAlt')}
@@ -20,20 +20,20 @@ export default async function Header() {
                 width={223.67}
                 className="h-8 w-auto"
               />
-            </Link>
+            </BlockedHomeLink>
           </div>
         </div>
 
         {/* Center: Title */}
         <div className="flex items-center gap-2">
-          <Link href="/" className="w-full">
+          <BlockedHomeLink href="/" className="w-full">
             <Title width={'100%'} height={'100%'} />
-          </Link>
+          </BlockedHomeLink>
         </div>
 
         {/* Right: Monash Logo (hidden on mobile) */}
         <div className="hidden items-center gap-4 md:flex">
-          <Link
+          <BlockedHomeLink
             href="/"
             className="rounded focus:outline-none focus:ring-2 focus:ring-[#E63946] focus:ring-offset-2"
           >
@@ -44,7 +44,7 @@ export default async function Header() {
               width={655}
               className="h-8 w-auto"
             />
-          </Link>
+          </BlockedHomeLink>
         </div>
       </div>
     </header>

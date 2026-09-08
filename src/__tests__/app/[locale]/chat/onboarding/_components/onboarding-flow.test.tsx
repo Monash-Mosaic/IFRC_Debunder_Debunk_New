@@ -111,6 +111,12 @@ jest.mock('@/components/newfeeds/prebunking-modal', () => {
   };
 });
 
+jest.mock('@/components/game-feed', () => {
+  return function MockGameFeed() {
+    return <div data-testid="game-feed">Game Feed</div>;
+  };
+});
+
 const mockAddPoints = jest.fn();
 const mockIncreaseCredibility = jest.fn();
 const mockDecreaseCredibility = jest.fn();
@@ -124,6 +130,7 @@ describe('OnboardingFlow practice question', () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2020-08-20T00:12:00.000Z'));
     window.localStorage.clear();
+    window.history.replaceState({}, '', '/');
 
     mockGetAnswer.mockReturnValue(null);
     mockIsAnswered.mockReturnValue(false);
@@ -205,7 +212,7 @@ describe('OnboardingFlow practice question', () => {
     expect(screen.getByTestId('practice-modal-header-practice-mcq')).toHaveTextContent('Practice Incorrect Title');
   });
 
-  it('advances to the main feed after the practice modal is dismissed', () => {
+  it('shows the game feed on the onboarding route after the practice modal is dismissed', () => {
     advanceToPractice();
 
     act(() => {
@@ -216,7 +223,22 @@ describe('OnboardingFlow practice question', () => {
     });
 
     expect(mockMoveToNextQuestion).not.toHaveBeenCalled();
-    expect(mockReplace).toHaveBeenCalledWith('/');
+    expect(mockReplace).not.toHaveBeenCalled();
+    expect(screen.getByTestId('game-feed')).toBeInTheDocument();
+    expect(window.localStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED)).toBe('true');
+  });
+
+  it('shows the game feed on the onboarding route when starting the quiz directly', () => {
+    render(<OnboardingFlow />);
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() => {
+      fireEvent.click(screen.getByText('step1.option1'));
+    });
+
+    expect(mockReplace).not.toHaveBeenCalled();
+    expect(screen.getByTestId('game-feed')).toBeInTheDocument();
     expect(window.localStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED)).toBe('true');
   });
 
