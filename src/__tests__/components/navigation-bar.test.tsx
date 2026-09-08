@@ -1,5 +1,7 @@
 import { render, screen } from '@/test-utils/test-utils';
+import userEvent from '@testing-library/user-event';
 import Navigation from '@/components/navigation-bar';
+import { STORAGE_KEYS, storage } from '@/lib/local-storage';
 
 // Use the global mock from jest.setup.js
 const mockUsePathname = global.mockUsePathname as unknown as jest.Mock;
@@ -164,6 +166,48 @@ describe('Navigation', () => {
         return parent?.classList.contains('md:flex');
       });
       expect(desktopLink).toHaveClass('text-(--color-ifrc-red)');
+    });
+  });
+
+  describe('Home toast', () => {
+    afterEach(() => {
+      storage.removeItem(STORAGE_KEYS.ONBOARDING_COMPLETED);
+    });
+
+    it('shows a toast when Home is clicked after onboarding is complete', async () => {
+      storage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, true);
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const homeLinks = screen.getAllByRole('link', { name: /home/i });
+      await user.click(homeLinks[0]);
+
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(
+        screen.getByText('You cannot exit to home in between the quiz!'),
+      ).toBeInTheDocument();
+    });
+
+    it('does not show a toast when Home is clicked before onboarding is complete', async () => {
+      storage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, false);
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const homeLinks = screen.getAllByRole('link', { name: /home/i });
+      await user.click(homeLinks[0]);
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('does not show a toast when a non-Home item is clicked after onboarding is complete', async () => {
+      storage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, true);
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const chatLinks = screen.getAllByRole('link', { name: /chat/i });
+      await user.click(chatLinks[0]);
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
   });
 });
