@@ -50,13 +50,19 @@
         "option3": "Attends, comment je sais ce qui est réel ?"
       },
       "step3": {
-        "tips": "Exactement ! Voici le secret : Cherche un langage exagéré, des sources manquantes, et des choses qui semblent TROP folles pour être vraies. Essaie le premier post - je te dirai comment tu t'en es sorti !",
+        "tips": "Voici le secret : Cherche un langage exagéré, des sources manquantes, et des choses qui semblent TROP folles pour être vraies. Essaie le premier post - je te dirai comment tu t'en es sorti !",
+        "tipsAgree": "Exactement ! Voici le secret : Cherche un langage exagéré, des sources manquantes, et des choses qui semblent TROP folles pour être vraies. Essaie le premier post - je te dirai comment tu t'en es sorti !",
+        "tipsShowMe": "Voici comment ça marche. Cherche un langage exagéré, des sources manquantes, et des choses qui semblent TROP folles pour être vraies. Essaie le premier post - je te dirai comment tu t'en es sorti !",
         "option1": "D'accord, j'entre dans le fil maintenant !",
         "option2": "Montre-moi un exemple d'abord ?"
       },
       "practice": {
-        "explanation": "Il y a deux types de publications que tu verras : les publications j'aime/je n'aime pas — aime si ça semble vrai, n'aime pas si ça semble faux — et les publications à choix multiples où tu choisis la meilleure réponse. Essayons-en une maintenant !"
+        "explanation": "Il y a deux types de publications que tu verras : les publications j'aime/je n'aime pas — aime si ça semble vrai, n'aime pas si ça semble faux — et les publications à choix multiples où tu choisis la meilleure réponse. Essayons-en une maintenant !",
+        "mcq": "Cette publication te demande de choisir une option. Choisis la bonne.",
+        "likeDislike": "Celle-ci te demande d'aimer ou de ne pas aimer. Aime si ça a l'air vrai, n'aime pas si ça a l'air faux.",
+        "share": "Cette publication te demande de partager ou de défiler. Si ça a l'air louche, défile."
       },
+      "returnHome": "Retour à l'accueil",
       "completed": {
         "message": "Le jeu commence ! Tu es prêt à naviguer dans le fil et identifier la désinformation. Bonne chance ! 🎮"
       }

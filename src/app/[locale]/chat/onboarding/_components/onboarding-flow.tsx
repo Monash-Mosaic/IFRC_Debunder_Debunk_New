@@ -19,8 +19,6 @@ import { CHAT_USERS } from '../../_constants/users';
 import { useRouter } from '@/i18n/routing';
 import CONTENTS from '@/contents';
 import { ContentType, LikeDislikeContent, MCQContent } from '@/contents/en';
-import { createGameStore } from '@/lib/use-game-store';
-import { useCredibilityStore } from '@/lib/use-credibility-store';
 import MCQPostMessage from '@/components/newfeeds/mcq-post-message';
 import LikeDislikePostMessage from '@/components/newfeeds/like-dislike-post-message';
 import PrebunkingModal from '@/components/newfeeds/prebunking-modal';
@@ -54,31 +52,17 @@ export default function OnboardingFlow() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const post = POSTS[locale];
 
-  const { content, contentList } = CONTENTS[locale as keyof typeof CONTENTS];
+  const { contentList } = CONTENTS[locale as keyof typeof CONTENTS];
   const practiceItem = contentList[0];
+  const practiceCoachingKey =
+    practiceItem.type === ContentType.MCQ
+      ? 'practice.mcq'
+      : practiceItem.type === ContentType.SHARE
+        ? 'practice.share'
+        : 'practice.likeDislike';
 
-  // Same createGameStore/useCredibilityStore machinery home-content.tsx uses, persisted to
-  // the same localStorage key — the real feed picks up this answer automatically.
-  const [usePracticeGameStore] = useState(() => createGameStore({
-    answers: {},
-    currentQuestionIndex: 0,
-    questions: contentList.map((item) => item.id),
-    questionStore: content,
-    gameCompleted: false,
-    correctAnswers: 0,
-  }));
-  const {
-    getAnswer: getPracticeAnswer,
-    setAnswer: setPracticeAnswer,
-    isAnswered: isPracticeAnswered,
-    moveToNextQuestion: movePracticeToNextQuestion,
-    incrCorrectAnswers: incrPracticeCorrectAnswers,
-  } = usePracticeGameStore();
-  const { increaseCredibility, decreaseCredibility, addPoints, initCredibility } = useCredibilityStore();
-
+  const [exampleAnswer, setExampleAnswer] = useState<string | null>(null);
   const [showPracticeModal, setShowPracticeModal] = useState(false);
-  const practiceAnswer = getPracticeAnswer(practiceItem.id);
-  const practiceAlreadyAnswered = isPracticeAnswered(practiceItem.id);
   const isPracticeState = state.value === 'practice';
 
   useEffect(() => {
@@ -104,6 +88,11 @@ export default function OnboardingFlow() {
     } as OnboardingOptionEvent);
   };
 
+  const handleReturnHome = () => {
+    storage.removeItem();
+    router.replace('/');
+  };
+
   // Move navigation and localStorage set to useEffect
   useEffect(() => {
     if (isCompleted) {
@@ -112,41 +101,20 @@ export default function OnboardingFlow() {
     }
   }, [isCompleted, router]);
 
-  // Resume mid-practice after a reload where the question was already answered: skip
-  // straight to completion instead of re-showing (and re-scoring) it.
-  useEffect(() => {
-    if (!isPracticeState || state.context.typing) return;
-    initCredibility(contentList.length);
-    if (practiceAlreadyAnswered && !showPracticeModal) {
-      movePracticeToNextQuestion();
-      send({ type: 'PRACTICE_ANSWERED' });
-    }
-  }, [isPracticeState, state.context.typing, practiceAlreadyAnswered, showPracticeModal, contentList.length, initCredibility, movePracticeToNextQuestion, send]);
-
-  const handlePracticeAnswer = (postId: string, answer: string) => {
-    if (isPracticeAnswered(postId)) return;
-    setPracticeAnswer(postId, answer);
-
-    const isCorrect = practiceItem.type === ContentType.MCQ
-      ? answer === (practiceItem as MCQContent).correctOptionId
-      : answer === (practiceItem as LikeDislikeContent).correctAnswer;
-
-    if (isCorrect) {
-      increaseCredibility();
-      addPoints(5);
-      incrPracticeCorrectAnswers();
-    } else {
-      decreaseCredibility();
-    }
-
+  const handlePracticeAnswer = (_postId: string, answer: string) => {
+    if (exampleAnswer) return;
+    setExampleAnswer(answer);
     setShowPracticeModal(true);
   };
 
   const handlePracticeModalDone = () => {
     setShowPracticeModal(false);
-    movePracticeToNextQuestion();
     send({ type: 'PRACTICE_ANSWERED' });
   };
+
+  const canReturnHome =
+    !state.context.typing &&
+    (state.value === 'step2' || state.value === 'step3' || state.value === 'practice');
 
   if (isCompleted) {
     return null;
@@ -170,7 +138,11 @@ export default function OnboardingFlow() {
                   key={message.id}
                   senderName={sender.name}
                   senderAvatar={sender.avatar}
-                  displayText={t(message.text)}
+                  displayText={t(
+                    message.text === 'practice.explanation'
+                      ? practiceCoachingKey
+                      : message.text
+                  )}
                 />
               );
             case 'post':
@@ -207,7 +179,7 @@ export default function OnboardingFlow() {
               mediaType={(practiceItem as MCQContent).post.mediaType}
               options={(practiceItem as MCQContent).options}
               correctOptionId={(practiceItem as MCQContent).correctOptionId}
-              answer={practiceAnswer}
+              answer={exampleAnswer}
               onAnswer={handlePracticeAnswer}
             />
           ) : (
@@ -217,7 +189,7 @@ export default function OnboardingFlow() {
               content={(practiceItem as LikeDislikeContent).post.content}
               mediaUrl={(practiceItem as LikeDislikeContent).post.mediaUrl}
               mediaType={(practiceItem as LikeDislikeContent).post.mediaType}
-              answer={practiceAnswer as 'like' | 'dislike' | null | undefined}
+              answer={exampleAnswer as 'like' | 'dislike' | null | undefined}
               correctAnswer={(practiceItem as LikeDislikeContent).correctAnswer}
               onLike={(postId) => handlePracticeAnswer(postId, 'like')}
               onDislike={(postId) => handlePracticeAnswer(postId, 'dislike')}
@@ -229,7 +201,7 @@ export default function OnboardingFlow() {
       </div>
 
       {/* Options Container */}
-      {!state.context.typing && currentOptions.length > 0 && (
+      {!state.context.typing && (currentOptions.length > 0 || canReturnHome) && (
         <div className="border-t border-[#E8E9ED] bg-white px-4 py-4 md:pb-4">
           <div className="mx-auto flex max-w-2xl flex-col gap-3">
             {currentOptions.map((option) => (
@@ -240,6 +212,13 @@ export default function OnboardingFlow() {
                 onClick={() => handleOptionClick(option.id, option.translationKey)}
               />
             ))}
+            {canReturnHome && (
+              <OptionButton
+                id="return-home"
+                displayText={t('returnHome')}
+                onClick={handleReturnHome}
+              />
+            )}
           </div>
         </div>
       )}
@@ -247,8 +226,8 @@ export default function OnboardingFlow() {
       {/* Practice question feedback modal — same component the real feed uses */}
       {showPracticeModal && (() => {
         const isCorrect = practiceItem.type === ContentType.MCQ
-          ? practiceAnswer === (practiceItem as MCQContent).correctOptionId
-          : practiceAnswer === (practiceItem as LikeDislikeContent).correctAnswer;
+          ? exampleAnswer === (practiceItem as MCQContent).correctOptionId
+          : exampleAnswer === (practiceItem as LikeDislikeContent).correctAnswer;
         const reasonContent = isCorrect
           ? practiceItem.whyCorrectAnswer.content
           : practiceItem.whyIncorrectAnswer.content;
