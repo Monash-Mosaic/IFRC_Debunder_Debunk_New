@@ -24,14 +24,14 @@ jest.mock('next/link', () => {
 });
 
 describe('ChatContent', () => {
-  it('renders onboarding and skip action links', () => {
+  it('renders onboarding link and skip button', () => {
     render(<ChatContent startOnboardingText="Start chat" skipText="Skip for now" />);
 
     expect(screen.getByRole('link', { name: 'Start chat' })).toHaveAttribute(
       'href',
       '/chat/onboarding',
     );
-    expect(screen.getByRole('link', { name: 'Skip for now' })).toHaveAttribute('href', '#');
+    expect(screen.getByRole('button', { name: 'Skip for now' })).toBeInTheDocument();
   });
 
   it('renders the onboarding illustration', () => {
@@ -42,7 +42,7 @@ describe('ChatContent', () => {
     expect(container.querySelector('svg')).toBeInTheDocument();
   });
 
-  it('calls onSkipClick when skip link is clicked', async () => {
+  it('calls onSkipClick when skip button is clicked', async () => {
     const onSkipClick = jest.fn();
     const user = userEvent.setup();
 
@@ -54,7 +54,7 @@ describe('ChatContent', () => {
       />,
     );
 
-    await user.click(screen.getByRole('link', { name: 'Skip' }));
+    await user.click(screen.getByRole('button', { name: 'Skip' }));
     expect(onSkipClick).toHaveBeenCalledTimes(1);
   });
 
@@ -63,6 +63,6 @@ describe('ChatContent', () => {
 
     render(<ChatContent startOnboardingText="Start" skipText="Skip" />);
 
-    await expect(user.click(screen.getByRole('link', { name: 'Skip' }))).resolves.not.toThrow();
+    await expect(user.click(screen.getByRole('button', { name: 'Skip' }))).resolves.not.toThrow();
   });
 });
