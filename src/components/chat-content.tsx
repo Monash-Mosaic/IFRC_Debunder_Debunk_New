@@ -11,7 +11,7 @@ interface ChatContentProps {
 
 export default function ChatContent({ startOnboardingText, skipText, onSkipClick = () => {} }: ChatContentProps) {
   return (
-    <div className="flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center px-4 py-8 md:py-12">
+    <div className="flex min-h-[calc(100vh-10rem)] flex-col items-center justify-center px-4 py-8 md:py-12">
       <div className="flex w-full max-w-md flex-col items-center gap-8">
         {/* Illustration */}
         <div className="space-y-4 overflow-y-auto">

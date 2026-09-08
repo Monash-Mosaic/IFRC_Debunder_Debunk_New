@@ -9,6 +9,7 @@ import CloudflareWebPerformance from '@/components/cloudflare-web-performance';
 import GoogleAnalytics from '@/components/google-analytics';
 import Header from '@/components/header';
 import PointsCredibilityBar from '@/components/points-credibility-bar';
+import Navigation from '@/components/navigation-bar';
 import { routing } from '@/i18n/routing';
 import { getDirection } from '@/i18n/utils';
 
@@ -79,6 +80,7 @@ export default async function LocaleLayout({
     <html lang={locale} dir={direction}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased ${direction}`}>
         <NextIntlClientProvider messages={messages}>
+          <Navigation />
           <Header />
           <PointsCredibilityBar />
           <main id="root" className="min-h-screen bg-white pt-24">
