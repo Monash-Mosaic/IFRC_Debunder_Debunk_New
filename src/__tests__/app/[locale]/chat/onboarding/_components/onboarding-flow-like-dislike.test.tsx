@@ -167,37 +167,37 @@ describe('OnboardingFlow practice question (like/dislike)', () => {
   it('renders the practice explanation message and the real first question via LikeDislikePostMessage', () => {
     advanceToPractice();
 
-    expect(screen.getByText('practice.explanation')).toBeInTheDocument();
+    expect(screen.getByText('practice.likeDislike')).toBeInTheDocument();
     expect(screen.getByTestId('practice-like-dislike-post-practice-like-dislike')).toBeInTheDocument();
   });
 
-  it('awards points and credibility on a correct ("like") practice answer, then shows the modal', () => {
+  it('keeps the example answer off the scored game and still shows the feedback modal', () => {
     advanceToPractice();
 
     act(() => {
       fireEvent.click(screen.getByTestId('practice-like-dislike-like-practice-like-dislike'));
     });
 
-    expect(mockSetAnswer).toHaveBeenCalledWith('practice-like-dislike', 'like');
-    expect(mockInitCredibility).toHaveBeenCalledWith(1);
-    expect(mockIncreaseCredibility).toHaveBeenCalled();
-    expect(mockAddPoints).toHaveBeenCalledWith(5);
-    expect(mockIncrCorrectAnswers).toHaveBeenCalled();
+    expect(mockSetAnswer).not.toHaveBeenCalled();
+    expect(mockInitCredibility).not.toHaveBeenCalled();
+    expect(mockIncreaseCredibility).not.toHaveBeenCalled();
+    expect(mockAddPoints).not.toHaveBeenCalled();
+    expect(mockIncrCorrectAnswers).not.toHaveBeenCalled();
     expect(mockDecreaseCredibility).not.toHaveBeenCalled();
 
     expect(screen.getByTestId('practice-modal-practice-like-dislike')).toBeInTheDocument();
     expect(screen.getByTestId('practice-modal-header-practice-like-dislike')).toHaveTextContent('Practice Correct Title');
   });
 
-  it('decreases credibility on an incorrect ("dislike") practice answer and shows the incorrect explanation', () => {
+  it('shows the incorrect explanation without scoring the example', () => {
     advanceToPractice();
 
     act(() => {
       fireEvent.click(screen.getByTestId('practice-like-dislike-dislike-practice-like-dislike'));
     });
 
-    expect(mockSetAnswer).toHaveBeenCalledWith('practice-like-dislike', 'dislike');
-    expect(mockDecreaseCredibility).toHaveBeenCalled();
+    expect(mockSetAnswer).not.toHaveBeenCalled();
+    expect(mockDecreaseCredibility).not.toHaveBeenCalled();
     expect(mockAddPoints).not.toHaveBeenCalled();
     expect(screen.getByTestId('practice-modal-header-practice-like-dislike')).toHaveTextContent('Practice Incorrect Title');
   });
@@ -212,7 +212,7 @@ describe('OnboardingFlow practice question (like/dislike)', () => {
       fireEvent.click(screen.getByTestId('practice-modal-continue-practice-like-dislike'));
     });
 
-    expect(mockMoveToNextQuestion).toHaveBeenCalled();
+    expect(mockMoveToNextQuestion).not.toHaveBeenCalled();
     expect(mockReplace).toHaveBeenCalledWith('/');
   });
 });

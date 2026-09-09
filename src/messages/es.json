@@ -54,13 +54,19 @@
         "option3": "Espera, ¿cómo sé qué es real?"
       },
       "step3": {
-        "tips": "¡Exacto! Aquí está el secreto: Busca lenguaje exagerado, fuentes faltantes y cosas que parecen DEMASIADO locas para ser ciertas. Prueba la primera publicación - ¡te diré cómo lo hiciste!",
+        "tips": "Aquí está el secreto: Busca lenguaje exagerado, fuentes faltantes y cosas que parecen DEMASIADO locas para ser ciertas. Prueba la primera publicación - ¡te diré cómo lo hiciste!",
+        "tipsAgree": "¡Exacto! Aquí está el secreto: Busca lenguaje exagerado, fuentes faltantes y cosas que parecen DEMASIADO locas para ser ciertas. Prueba la primera publicación - ¡te diré cómo lo hiciste!",
+        "tipsShowMe": "Así es como funciona. Busca lenguaje exagerado, fuentes faltantes y cosas que parecen DEMASIADO locas para ser ciertas. Prueba la primera publicación - ¡te diré cómo lo hiciste!",
         "option1": "¡De acuerdo, entrando al feed ahora!",
         "option2": "¿Muéstrame un ejemplo primero?"
       },
       "practice": {
-        "explanation": "Hay dos tipos de publicaciones que verás: publicaciones de me gusta/no me gusta — dale me gusta si parece verdadera, no me gusta si parece falsa — y publicaciones de opción múltiple donde eliges la mejor respuesta. ¡Probemos una ahora!"
+        "explanation": "Hay dos tipos de publicaciones que verás: publicaciones de me gusta/no me gusta — dale me gusta si parece verdadera, no me gusta si parece falsa — y publicaciones de opción múltiple donde eliges la mejor respuesta. ¡Probemos una ahora!",
+        "mcq": "Esta publicación te pide elegir una opción. Elige la correcta.",
+        "likeDislike": "Esta te pide dar me gusta o no me gusta. Me gusta si parece verdadera, no me gusta si parece falsa.",
+        "share": "Esta publicación te pide compartir o seguir. Si se ve dudosa, sigue de largo."
       },
+      "returnHome": "Volver al inicio",
       "completed": {
         "message": "¡El juego comienza! Estás listo para navegar el feed e identificar la desinformación. ¡Buena suerte! 🎮"
       }

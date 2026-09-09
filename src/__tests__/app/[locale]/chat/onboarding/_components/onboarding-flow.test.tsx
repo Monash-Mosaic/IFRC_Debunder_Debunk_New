@@ -172,7 +172,7 @@ describe('OnboardingFlow practice question', () => {
   it('renders the practice explanation message and the real first question', () => {
     advanceToPractice();
 
-    expect(screen.getByText('practice.explanation')).toBeInTheDocument();
+    expect(screen.getByText('practice.mcq')).toBeInTheDocument();
     expect(screen.getByTestId('practice-mcq-post-practice-mcq')).toBeInTheDocument();
   });
 
@@ -195,33 +195,33 @@ describe('OnboardingFlow practice question', () => {
     }
   });
 
-  it('awards points and credibility on a correct practice answer, then shows the modal', () => {
+  it('keeps the example answer off the scored game and still shows the feedback modal', () => {
     advanceToPractice();
 
     act(() => {
       fireEvent.click(screen.getByTestId('practice-mcq-correct-practice-mcq'));
     });
 
-    expect(mockSetAnswer).toHaveBeenCalledWith('practice-mcq', 'opt-a');
-    expect(mockInitCredibility).toHaveBeenCalledWith(1);
-    expect(mockIncreaseCredibility).toHaveBeenCalled();
-    expect(mockAddPoints).toHaveBeenCalledWith(5);
-    expect(mockIncrCorrectAnswers).toHaveBeenCalled();
+    expect(mockSetAnswer).not.toHaveBeenCalled();
+    expect(mockInitCredibility).not.toHaveBeenCalled();
+    expect(mockIncreaseCredibility).not.toHaveBeenCalled();
+    expect(mockAddPoints).not.toHaveBeenCalled();
+    expect(mockIncrCorrectAnswers).not.toHaveBeenCalled();
     expect(mockDecreaseCredibility).not.toHaveBeenCalled();
 
     expect(screen.getByTestId('practice-modal-practice-mcq')).toBeInTheDocument();
     expect(screen.getByTestId('practice-modal-header-practice-mcq')).toHaveTextContent('Practice Correct Title');
   });
 
-  it('decreases credibility on an incorrect practice answer and shows the incorrect explanation', () => {
+  it('shows the incorrect explanation without scoring the example', () => {
     advanceToPractice();
 
     act(() => {
       fireEvent.click(screen.getByTestId('practice-mcq-incorrect-practice-mcq'));
     });
 
-    expect(mockSetAnswer).toHaveBeenCalledWith('practice-mcq', 'opt-b');
-    expect(mockDecreaseCredibility).toHaveBeenCalled();
+    expect(mockSetAnswer).not.toHaveBeenCalled();
+    expect(mockDecreaseCredibility).not.toHaveBeenCalled();
     expect(mockAddPoints).not.toHaveBeenCalled();
     expect(screen.getByTestId('practice-modal-header-practice-mcq')).toHaveTextContent('Practice Incorrect Title');
   });
@@ -236,15 +236,12 @@ describe('OnboardingFlow practice question', () => {
       fireEvent.click(screen.getByTestId('practice-modal-continue-practice-mcq'));
     });
 
-    expect(mockMoveToNextQuestion).toHaveBeenCalled();
+    expect(mockMoveToNextQuestion).not.toHaveBeenCalled();
     expect(mockReplace).toHaveBeenCalledWith('/');
     expect(window.localStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED)).toBe('true');
   });
 
-  it('skips straight to completion on mount if the practice question was already answered', () => {
-    mockIsAnswered.mockReturnValue(true);
-    mockGetAnswer.mockReturnValue('opt-a');
-
+  it('returns to locale home without starting the quiz', () => {
     render(<OnboardingFlow />);
     act(() => {
       jest.advanceTimersByTime(1000);
@@ -255,7 +252,12 @@ describe('OnboardingFlow practice question', () => {
     act(() => {
       jest.advanceTimersByTime(1000);
     });
+    act(() => {
+      fireEvent.click(screen.getByText('returnHome'));
+    });
 
     expect(mockReplace).toHaveBeenCalledWith('/');
+    expect(window.localStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED)).not.toBe('true');
+    expect(window.localStorage.getItem(STORAGE_KEYS.CHAT_ONBOARDING_STATE)).toBeNull();
   });
 });

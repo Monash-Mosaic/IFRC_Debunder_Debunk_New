@@ -45,18 +45,17 @@ describe('onboardingMachine', () => {
     expect(normalized).toMatchSnapshot();
   });
 
-  it('matches snapshot when selecting option1 in step1 (completes immediately)', () => {
+  it('routes option1-step1 into completed so the game begins directly', () => {
     const { result } = renderHook(() => useOnboardingMachine());
 
     act(() =>
       result.current[1]({
         type: 'option1-step1',
-        optionText: "Let's go",
+        optionText: "Let's do this",
       } as OnboardingOptionEvent)
     );
 
-    const normalized = normalizeForSnapshot(result.current[0]);
-    expect(normalized).toMatchSnapshot();
+    expect(result.current[0].value).toBe('completed');
   });
 
   it('matches snapshot following step1 -> step2 -> step3 path', () => {
@@ -117,7 +116,7 @@ describe('onboardingMachine', () => {
     act(() =>
       result.current[1]({
         type: 'option2-step3',
-        optionText: 'Option 2',
+        optionText: 'Show me an example first?',
       } as OnboardingOptionEvent)
     );
 
@@ -139,7 +138,7 @@ describe('onboardingMachine', () => {
     expect(normalized3).toMatchSnapshot('after practice answered (completed state)');
   });
 
-  it('routes option3-step1 directly into practice', () => {
+  it('routes option3-step1 into practice for the example path', () => {
     const { result } = renderHook(() => useOnboardingMachine());
 
     act(() =>
@@ -152,7 +151,38 @@ describe('onboardingMachine', () => {
     expect(result.current[0].value).toBe('practice');
   });
 
-  it('routes the confident shortcuts (option1-step2, option1-step3) into practice instead of skipping straight to completed', () => {
+  it('routes entering the feed from step3 to completed', () => {
+    const { result } = renderHook(() => useOnboardingMachine());
+
+    act(() =>
+      result.current[1]({
+        type: 'option2-step1',
+        optionText: 'Option 2',
+      } as OnboardingOptionEvent)
+    );
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() =>
+      result.current[1]({
+        type: 'option2-step2',
+        optionText: 'Option 2',
+      } as OnboardingOptionEvent)
+    );
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() =>
+      result.current[1]({
+        type: 'option1-step3',
+        optionText: 'Okay, entering the feed now!',
+      } as OnboardingOptionEvent)
+    );
+
+    expect(result.current[0].value).toBe('completed');
+  });
+
+  it('routes I can spot fake news from step2 into completed', () => {
     const { result } = renderHook(() => useOnboardingMachine());
 
     act(() =>
@@ -168,6 +198,28 @@ describe('onboardingMachine', () => {
       result.current[1]({
         type: 'option1-step2',
         optionText: 'Option 1',
+      } as OnboardingOptionEvent)
+    );
+
+    expect(result.current[0].value).toBe('completed');
+  });
+
+  it('routes wait how do I know from step2 into practice', () => {
+    const { result } = renderHook(() => useOnboardingMachine());
+
+    act(() =>
+      result.current[1]({
+        type: 'option2-step1',
+        optionText: 'Option 2',
+      } as OnboardingOptionEvent)
+    );
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() =>
+      result.current[1]({
+        type: 'option3-step2',
+        optionText: 'Option 3',
       } as OnboardingOptionEvent)
     );
 

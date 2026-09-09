@@ -54,13 +54,19 @@
         "option3": "Wait, how do I know what's real?"
       },
       "step3": {
-        "tips": "Exactly! Here's the secret: Look for exaggerated language, missing sources, and stuff that seems TOO crazy to be true. Try the first post - I'll tell you how you did!",
+        "tips": "Here's the secret: Look for exaggerated language, missing sources, and stuff that seems TOO crazy to be true. Try the first post - I'll tell you how you did!",
+        "tipsAgree": "Exactly! Here's the secret: Look for exaggerated language, missing sources, and stuff that seems TOO crazy to be true. Try the first post - I'll tell you how you did!",
+        "tipsShowMe": "Here's how it works. Look for exaggerated language, missing sources, and stuff that seems TOO crazy to be true. Try the first post - I'll tell you how you did!",
         "option1": "Okay, entering the feed now!",
         "option2": "Show me an example first?"
       },
       "practice": {
-        "explanation": "There are two kinds of posts you'll see: like/dislike posts — like it if it looks true, dislike if it looks false — and multiple-choice posts where you pick the best response. Let's try one now!"
+        "explanation": "There are two kinds of posts you'll see: like/dislike posts — like it if it looks true, dislike if it looks false — and multiple-choice posts where you pick the best response. Let's try one now!",
+        "mcq": "This post is asking you to pick an option. Choose the correct one.",
+        "likeDislike": "This one is asking you to like or dislike. Like it if it looks true, dislike if it looks false.",
+        "share": "This post is asking you to share or scroll. If the post looks dodgy, you should scroll."
       },
+      "returnHome": "Return home",
       "completed": {
         "message": "Game begins! You're all set to navigate the feed and identify misinformation. Good luck! 🎮"
       }
