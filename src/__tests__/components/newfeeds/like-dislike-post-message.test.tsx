@@ -1,103 +1,8 @@
 import React from 'react';
-import { render, screen, act } from '@/test-utils/test-utils';
+import { render, screen } from '@/test-utils/test-utils';
 import userEvent from '@testing-library/user-event';
+import { useTranslations } from 'next-intl';
 import LikeDislikePostMessage from '@/components/newfeeds/like-dislike-post-message';
-
-// Mock PostMessage component
-jest.mock('@/app/[locale]/chat/onboarding/_components/post-message', () => {
-  return function MockPostMessage({
-    name,
-    handle,
-    content,
-    onLike,
-    onDislike,
-    likeDisabled,
-    dislikeDisabled,
-    commentDisabled,
-    shareDisabled,
-    likeClassName,
-    dislikeClassName,
-  }: any) {
-    return (
-      <div data-testid="post-message">
-        <div data-testid="post-name">{name}</div>
-        <div data-testid="post-handle">{handle}</div>
-        <div data-testid="post-content">{content}</div>
-        <button
-          data-testid="like-button"
-          onClick={onLike}
-          disabled={likeDisabled}
-          className={likeClassName}
-          aria-label="Like"
-        >
-          Like
-        </button>
-        <button
-          data-testid="dislike-button"
-          onClick={onDislike}
-          disabled={dislikeDisabled}
-          className={dislikeClassName}
-          aria-label="Dislike"
-        >
-          Dislike
-        </button>
-        <button
-          data-testid="comment-button"
-          disabled={commentDisabled}
-          aria-label="Comment"
-        >
-          Comment
-        </button>
-        <button
-          data-testid="share-button"
-          disabled={shareDisabled}
-          aria-label="Share"
-        >
-          Share
-        </button>
-      </div>
-    );
-  };
-});
-
-// Mock PrebunkingModal component
-const mockOnClose = jest.fn();
-jest.mock('@/components/newfeeds/prebunking-modal', () => {
-  return function MockPrebunkingModal({
-    isOpen,
-    onClose,
-    postId,
-    content,
-    header,
-  }: {
-    isOpen: boolean;
-    onClose: () => void;
-    postId: string;
-    content: React.ReactNode;
-    header: React.ReactNode;
-  }) {
-    // Store onClose for testing
-    if (isOpen) {
-      mockOnClose.mockImplementation(onClose);
-    }
-    return isOpen ? (
-      <div data-testid="prebunking-modal">
-        <div data-testid="modal-post-id">{postId}</div>
-        <button data-testid="modal-close" onClick={onClose}>
-          Close
-        </button>
-      </div>
-    ) : null;
-  };
-});
-
-// Mock next-intl
-jest.mock('next-intl', () => ({
-  useTranslations: jest.fn(() => (key: string) => key),
-}));
-
-// Game store is no longer used in this component
-
 
 describe('LikeDislikePostMessage', () => {
   const defaultProps = {
@@ -110,48 +15,51 @@ describe('LikeDislikePostMessage', () => {
       isUser: false,
     },
     content: <div>Test post content</div>,
+    onLike: jest.fn(),
+    onDislike: jest.fn(),
     correctAnswer: 'like' as const,
     answer: null as 'like' | 'dislike' | null,
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(useTranslations).mockReturnValue(((key: string) => ({ like: 'Like', report: 'Report' })[key] ?? key) as ReturnType<typeof useTranslations>);
   });
 
   it('renders PostMessage with correct props', () => {
     render(<LikeDislikePostMessage {...defaultProps} />);
 
-    expect(screen.getByTestId('post-message')).toBeInTheDocument();
+    expect(screen.getByRole('article')).toHaveTextContent('Test post content');
+    expect(screen.getAllByRole('button')).toHaveLength(2);
+    expect(screen.getByRole('button', { name: 'Like' }).querySelector('.lucide-thumbs-up')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Report' }).querySelector('.lucide-circle-alert')).toBeInTheDocument();
   });
 
   it('passes likeDisabled and dislikeDisabled as false when not answered', () => {
     render(<LikeDislikePostMessage {...defaultProps} answer={null} />);
 
-    const likeButton = screen.getByTestId('like-button');
-    const dislikeButton = screen.getByTestId('dislike-button');
+    const likeButton = screen.getByRole('button', { name: 'Like' });
+    const reportButton = screen.getByRole('button', { name: 'Report' });
 
     expect(likeButton).not.toBeDisabled();
-    expect(dislikeButton).not.toBeDisabled();
+    expect(reportButton).not.toBeDisabled();
   });
 
   it('passes likeDisabled and dislikeDisabled as true when answered', () => {
     render(<LikeDislikePostMessage {...defaultProps} answer="like" />);
 
-    const likeButton = screen.getByTestId('like-button');
-    const dislikeButton = screen.getByTestId('dislike-button');
+    const likeButton = screen.getByRole('button', { name: 'Like' });
+    const reportButton = screen.getByRole('button', { name: 'Report' });
 
     expect(likeButton).toBeDisabled();
-    expect(dislikeButton).toBeDisabled();
+    expect(reportButton).toBeDisabled();
   });
 
-  it('passes commentDisabled and shareDisabled as true', () => {
+  it('does not expose legacy Comment or Share actions', () => {
     render(<LikeDislikePostMessage {...defaultProps} />);
 
-    const commentButton = screen.getByTestId('comment-button');
-    const shareButton = screen.getByTestId('share-button');
-
-    expect(commentButton).toBeDisabled();
-    expect(shareButton).toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'Comment' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Share' })).not.toBeInTheDocument();
   });
 
   it('calls onLike when like button is clicked and not answered', async () => {
@@ -159,20 +67,20 @@ describe('LikeDislikePostMessage', () => {
     const user = userEvent.setup();
     render(<LikeDislikePostMessage {...defaultProps} answer={null} onLike={mockOnLike} />);
 
-    const likeButton = screen.getByTestId('like-button');
+    const likeButton = screen.getByRole('button', { name: 'Like' });
     await user.click(likeButton);
 
     expect(mockOnLike).toHaveBeenCalledTimes(1);
     expect(mockOnLike).toHaveBeenCalledWith('post-123');
   });
 
-  it('calls onDislike when dislike button is clicked and not answered', async () => {
+  it('maps Report to onDislike when clicked and not answered', async () => {
     const mockOnDislike = jest.fn();
     const user = userEvent.setup();
     render(<LikeDislikePostMessage {...defaultProps} answer={null} onDislike={mockOnDislike} />);
 
-    const dislikeButton = screen.getByTestId('dislike-button');
-    await user.click(dislikeButton);
+    const reportButton = screen.getByRole('button', { name: 'Report' });
+    await user.click(reportButton);
 
     expect(mockOnDislike).toHaveBeenCalledTimes(1);
     expect(mockOnDislike).toHaveBeenCalledWith('post-123');
@@ -183,7 +91,7 @@ describe('LikeDislikePostMessage', () => {
     const user = userEvent.setup();
     render(<LikeDislikePostMessage {...defaultProps} answer="like" onLike={mockOnLike} />);
 
-    const likeButton = screen.getByTestId('like-button');
+    const likeButton = screen.getByRole('button', { name: 'Like' });
     await user.click(likeButton);
 
     expect(mockOnLike).not.toHaveBeenCalled();
@@ -193,53 +101,53 @@ describe('LikeDislikePostMessage', () => {
   it('applies correct color class to like button when answer is correct', () => {
     render(<LikeDislikePostMessage {...defaultProps} correctAnswer="like" answer="like" />);
 
-    const likeButton = screen.getByTestId('like-button');
-    expect(likeButton).toHaveClass('fill-(--color-dunder-green)');
+    const likeButton = screen.getByRole('button', { name: 'Like' });
+    expect(likeButton.querySelector('svg')).toHaveClass('fill-(--color-dunder-green)');
   });
 
   it('applies incorrect color class to like button when answer is incorrect', () => {
     render(<LikeDislikePostMessage {...defaultProps} correctAnswer="dislike" answer="like" />);
 
-    const likeButton = screen.getByTestId('like-button');
-    expect(likeButton).toHaveClass('fill-(--color-dunder-red)');
+    const likeButton = screen.getByRole('button', { name: 'Like' });
+    expect(likeButton.querySelector('svg')).toHaveClass('fill-(--color-dunder-red)');
   });
 
-  it('applies correct color class to dislike button when answer is correct', () => {
+  it('applies correct color class to Report when the internal dislike answer is correct', () => {
     render(<LikeDislikePostMessage {...defaultProps} correctAnswer="dislike" answer="dislike" />);
 
-    const dislikeButton = screen.getByTestId('dislike-button');
-    expect(dislikeButton).toHaveClass('fill-(--color-dunder-green)');
+    const reportButton = screen.getByRole('button', { name: 'Report' });
+    expect(reportButton.querySelector('svg')).toHaveClass('fill-(--color-dunder-green)');
   });
 
-  it('applies incorrect color class to dislike button when answer is incorrect', () => {
+  it('applies incorrect color class to Report when the internal dislike answer is incorrect', () => {
     render(<LikeDislikePostMessage {...defaultProps} correctAnswer="like" answer="dislike" />);
 
-    const dislikeButton = screen.getByTestId('dislike-button');
-    expect(dislikeButton).toHaveClass('fill-(--color-dunder-red)');
+    const reportButton = screen.getByRole('button', { name: 'Report' });
+    expect(reportButton.querySelector('svg')).toHaveClass('fill-(--color-dunder-red)');
   });
 
   it('does not apply color class to non-clicked button', () => {
     render(<LikeDislikePostMessage {...defaultProps} correctAnswer="like" answer="like" />);
 
-    const dislikeButton = screen.getByTestId('dislike-button');
-    expect(dislikeButton).not.toHaveClass('fill-(--color-dunder-green)');
-    expect(dislikeButton).not.toHaveClass('fill-(--color-dunder-red)');
+    const reportButton = screen.getByRole('button', { name: 'Report' });
+    expect(reportButton.querySelector('svg')).not.toHaveClass('fill-(--color-dunder-green)');
+    expect(reportButton.querySelector('svg')).not.toHaveClass('fill-(--color-dunder-red)');
   });
 
 
   it('works with null answer (not answered yet)', () => {
     render(<LikeDislikePostMessage {...defaultProps} answer={null} />);
 
-    const likeButton = screen.getByTestId('like-button');
-    const dislikeButton = screen.getByTestId('dislike-button');
+    const likeButton = screen.getByRole('button', { name: 'Like' });
+    const reportButton = screen.getByRole('button', { name: 'Report' });
 
     expect(likeButton).not.toBeDisabled();
-    expect(dislikeButton).not.toBeDisabled();
-    expect(likeButton).not.toHaveClass('fill-(--color-dunder-green)');
-    expect(dislikeButton).not.toHaveClass('fill-(--color-dunder-red)');
+    expect(reportButton).not.toBeDisabled();
+    expect(likeButton.querySelector('svg')).not.toHaveClass('fill-(--color-dunder-green)');
+    expect(reportButton.querySelector('svg')).not.toHaveClass('fill-(--color-dunder-red)');
   });
 
-  it('does not call onDislike if post is already answered', async () => {
+  it('does not call onDislike through Report if the post is already answered', async () => {
     const mockOnDislike = jest.fn();
     const user = userEvent.setup();
     render(
@@ -250,23 +158,40 @@ describe('LikeDislikePostMessage', () => {
       />,
     );
 
-    await user.click(screen.getByTestId('dislike-button'));
+    await user.click(screen.getByRole('button', { name: 'Report' }));
     expect(mockOnDislike).not.toHaveBeenCalled();
   });
 
-  it('safely handles missing callbacks when unanswered', async () => {
-    const user = userEvent.setup();
-    render(<LikeDislikePostMessage {...defaultProps} answer={null} />);
+  it('disables actions with missing callbacks when unanswered', () => {
+    render(<LikeDislikePostMessage {...defaultProps} onLike={undefined} onDislike={undefined} />);
+    expect(screen.getByRole('button', { name: 'Like' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Report' })).toBeDisabled();
+  });
 
-    await expect(user.click(screen.getByTestId('like-button'))).resolves.not.toThrow();
-    await expect(user.click(screen.getByTestId('dislike-button'))).resolves.not.toThrow();
+  it('forwards the disabled state to the real post and prevents both callbacks', async () => {
+    const user = userEvent.setup();
+    render(<LikeDislikePostMessage {...defaultProps} isDisabled />);
+    expect(screen.getByRole('article')).toHaveClass('opacity-50');
+    for (const button of screen.getAllByRole('button')) {
+      expect(button).toBeDisabled();
+      await user.click(button);
+    }
+    expect(defaultProps.onLike).not.toHaveBeenCalled();
+    expect(defaultProps.onDislike).not.toHaveBeenCalled();
+  });
+
+  it.each(['like', 'dislike'] as const)('exposes only the selected %s action as pressed', (answer) => {
+    render(<LikeDislikePostMessage {...defaultProps} answer={answer} />);
+    expect(screen.getByRole('button', { name: 'Like' })).toHaveAttribute('aria-pressed', String(answer === 'like'));
+    expect(screen.getByRole('button', { name: 'Report' })).toHaveAttribute('aria-pressed', String(answer === 'dislike'));
+    expect(screen.getByRole('button', { pressed: true })).not.toHaveClass('opacity-50');
   });
 
   it('treats undefined answer the same as unanswered', () => {
     render(<LikeDislikePostMessage {...defaultProps} answer={undefined} />);
 
-    expect(screen.getByTestId('like-button')).not.toBeDisabled();
-    expect(screen.getByTestId('dislike-button')).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Like' })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Report' })).not.toBeDisabled();
   });
 
 });

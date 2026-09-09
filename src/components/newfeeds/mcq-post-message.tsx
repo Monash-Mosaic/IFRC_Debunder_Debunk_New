@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { ThumbsUp, ThumbsDown, MessageCircle, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { MCQOption, User } from '@/contents/en';
 
@@ -95,36 +94,18 @@ export default function MCQPostMessage({
         {options.map((option) => (
           <button
             key={option.id}
+            type="button"
+            aria-pressed={answer === option.id}
             disabled={hasAnswered || isDisabled}
             onClick={() => onAnswer(postId, option.id)}
             className={cn(
-              'w-full text-left rounded-lg px-4 py-3 text-sm font-medium border transition-colors',
+              'w-full min-h-12 text-start rounded-lg px-4 py-3 text-sm font-medium border transition-colors',
               getOptionClass(option.id)
             )}
           >
             {option.label}
           </button>
         ))}
-      </div>
-
-      {/* Social action bar (all disabled - MCQ interaction is via options) */}
-      <div className="flex items-center justify-between border-t border-[#E8E9ED] pt-3">
-        <div className="flex items-center gap-4">
-          <button disabled className="flex items-center gap-1 text-(--color-ifrc-blue)/30 cursor-not-allowed" aria-label="Like" type="button">
-            <ThumbsUp size={20} strokeWidth={2} aria-hidden="true" />
-          </button>
-          <button disabled className="flex items-center gap-1 text-(--color-ifrc-blue)/30 cursor-not-allowed" aria-label="Dislike" type="button">
-            <ThumbsDown size={20} strokeWidth={2} aria-hidden="true" />
-          </button>
-        </div>
-        <div className="flex items-center gap-4">
-          <button disabled className="flex items-center gap-1 text-(--color-ifrc-blue)/30 cursor-not-allowed" aria-label="Comment" type="button">
-            <MessageCircle size={20} strokeWidth={2} aria-hidden="true" />
-          </button>
-          <button disabled className="flex items-center gap-1 text-(--color-ifrc-blue)/30 cursor-not-allowed" aria-label="Share" type="button">
-            <Send size={20} strokeWidth={2} aria-hidden="true" />
-          </button>
-        </div>
       </div>
 
     </article>

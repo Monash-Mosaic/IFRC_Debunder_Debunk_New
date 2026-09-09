@@ -182,7 +182,7 @@ export default function OnboardingFlow() {
               answer={exampleAnswer}
               onAnswer={handlePracticeAnswer}
             />
-          ) : (
+          ) : practiceItem.type === ContentType.LIKE_DISLIKE ? (
             <LikeDislikePostMessage
               postId={practiceItem.id}
               user={(practiceItem as LikeDislikeContent).post.user}
@@ -194,7 +194,7 @@ export default function OnboardingFlow() {
               onLike={(postId) => handlePracticeAnswer(postId, 'like')}
               onDislike={(postId) => handlePracticeAnswer(postId, 'dislike')}
             />
-          )
+          ) : null
         )}
 
         <div ref={messagesEndRef} />

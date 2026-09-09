@@ -170,6 +170,36 @@ describe('HomeContent navigation', () => {
 
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(screen.getByText('Please engage with this post before moving to the next one')).toBeInTheDocument();
+    expect(mockScrollNext).not.toHaveBeenCalled();
+    expect(mockMoveToNextQuestion).not.toHaveBeenCalled();
+  });
+
+  it('uses one responsive set of controls below mobile content and beside desktop content', () => {
+    render(<HomeContent />);
+    const previous = screen.getByRole('button', { name: 'Previous post' });
+    const next = screen.getByRole('button', { name: 'Next post' });
+    expect(previous.parentElement).toBe(next.parentElement);
+    expect(next.parentElement).toHaveClass('flex', 'flex-row', 'shrink-0', 'md:flex-col');
+    expect(next.parentElement).not.toHaveClass('hidden');
+    expect(previous).toHaveAttribute('aria-disabled', 'true');
+    expect(next).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it.each([375, 1280])('preserves traversal without advancing game state at %ipx', async (width) => {
+    const originalWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
+    try {
+      mockIsAnswered.mockReturnValue(true);
+      mockCanScrollPrev.mockReturnValue(true);
+      mockSelectedScrollSnap.mockReturnValue(1);
+      const user = userEvent.setup();
+      render(<HomeContent />);
+      await user.click(screen.getByRole('button', { name: 'Previous post' }));
+      expect(mockScrollPrev).toHaveBeenCalledTimes(1);
+      expect(mockMoveToNextQuestion).not.toHaveBeenCalled();
+    } finally {
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalWidth });
+    }
   });
 
   it('shows a toast when next is clicked on the last post', async () => {
@@ -197,6 +227,7 @@ describe('HomeContent navigation', () => {
     await user.click(nextButton);
 
     expect(mockScrollNext).toHaveBeenCalled();
+    expect(mockMoveToNextQuestion).not.toHaveBeenCalled();
   });
 
   it('shows a toast when previous is clicked on the first post', async () => {

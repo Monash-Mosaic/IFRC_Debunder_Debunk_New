@@ -197,8 +197,8 @@ export default function HomeContent() {
     <div
       className={cn(
         'mx-auto flex w-full max-w-md flex-col overflow-hidden overscroll-y-contain md:max-w-none md:overflow-visible md:px-4',
-        // Mobile: height matches main padding (pt-24 header+credibility + pb-16 bottom nav), not h-screen — avoids extra page scroll & top/bottom gaps
-        'max-md:h-[calc(100dvh-10rem-env(safe-area-inset-bottom,0px))] max-md:min-h-0 max-md:touch-pan-y',
+        // Mobile: reserve the fixed header/score area; traversal sits inside this viewport.
+        'max-md:h-[calc(100dvh-6rem)] max-md:pb-[env(safe-area-inset-bottom,0px)] max-md:min-h-0 max-md:touch-pan-y',
         'md:h-screen',
       )}
     >
@@ -249,7 +249,7 @@ export default function HomeContent() {
                       }}
                       key={contentItem.id}
                     >
-                      <div className="flex h-full items-center justify-center overflow-y-auto">
+                      <div className="flex h-full flex-col overflow-y-auto [&>article]:my-auto [&>article]:shrink-0">
                         {contentItem.type === ContentType.MCQ ? (
                           <MCQPostMessage
                             postId={contentItem.id}
@@ -263,7 +263,7 @@ export default function HomeContent() {
                             isDisabled={isDisabled}
                             onAnswer={handleOnAnswer}
                           />
-                        ) : (
+                        ) : contentItem.type === ContentType.LIKE_DISLIKE ? (
                           <LikeDislikePostMessage
                             postId={contentItem.id}
                             user={(contentItem as LikeDislikeContent).post.user}
@@ -276,7 +276,7 @@ export default function HomeContent() {
                             onDislike={(postId) => handleOnAnswer(postId, 'dislike')}
                             isDisabled={isDisabled}
                           />
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   );
@@ -285,8 +285,8 @@ export default function HomeContent() {
             </VerticalCarousel>
           </div>
 
-          {/* Desktop only — stays visible behind modal; overlay (z-[100]) blocks interaction */}
-          <div className="relative z-10 hidden h-[70vh] shrink-0 flex-col items-center justify-center gap-4 md:flex md:py-2 md:pl-1">
+          {/* One set of controls: below the feed on mobile, beside it on desktop. */}
+          <div className="relative z-10 flex shrink-0 flex-row items-center justify-center gap-4 py-2 md:h-[70vh] md:flex-col md:pl-1">
             {/* Up arrow (Previous post) */}
             <button
               type="button"

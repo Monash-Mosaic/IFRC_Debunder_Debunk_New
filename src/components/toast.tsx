@@ -28,6 +28,8 @@ export default function Toast({ message, isVisible, onClose, duration = 4000 }: 
     <div
       className={cn(
         'fixed bottom-6 left-1/2 -translate-x-1/2 z-50',
+        // Keep mobile feed traversal visible while a boundary notification is open.
+        'max-md:bottom-[calc(4rem+env(safe-area-inset-bottom,0px))] max-md:mx-0 max-md:w-[calc(100%-2rem)]',
         'bg-white border-2 border-[#011E41] px-4 py-3 rounded-xl shadow-2xl',
         'flex items-center gap-3',
         'transition-all duration-300 ease-in-out',
